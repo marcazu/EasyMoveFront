@@ -162,7 +162,12 @@ public class LoginActivity extends AppCompatActivity {
         final SignInButton googleButton = findViewById(R.id.sign_in_button);
         googleButton.setVisibility(View.INVISIBLE);
         setResult(Activity.RESULT_OK);
-        finish();
+        CharSequence text = "Welcome";
+        int duration = Toast.LENGTH_LONG;
+
+        Toast toast = Toast.makeText(this, text, duration);
+        toast.show();
+        //finish();
     }
 
     private void updateUiWithUser(LoggedInUserView model) {
@@ -189,7 +194,12 @@ public class LoginActivity extends AppCompatActivity {
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            e.printStackTrace();
+            CharSequence text = e.toString();
+            int duration = Toast.LENGTH_LONG;
+
+            Toast toast = Toast.makeText(this, text, duration);
+            toast.show();
+            //e.printStackTrace();
             //Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
             //updateUI(null);
         }

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1027441080971",
+    "firebase_url": "https://easymov.firebaseio.com",
+    "project_id": "easymov",
+    "storage_bucket": "easymov.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1027441080971:android:54f1109e0a08ccff51b28e",
+        "android_client_info": {
+          "package_name": "com.example.easymovefront"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1027441080971-49ne9661vhjjag0mq1nbtnftu4d1gole.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.easymovefront",
+            "certificate_hash": "40397f65247008315ed859a49086a95387a05973"
+          }
+        },
+        {
+          "client_id": "1027441080971-ao9efc4ng598nqemboa1bsomq8965k9r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADh6nS6Df_wWyys05YcsedLfKTeoveWoA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1027441080971-ao9efc4ng598nqemboa1bsomq8965k9r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
