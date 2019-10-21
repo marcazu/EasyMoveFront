@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.easymovefront.R;
+import com.example.easymovefront.network.UpdateUsersTask;
 import com.example.easymovefront.ui.login.LoginViewModel;
 import com.example.easymovefront.ui.login.LoginViewModelFactory;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -31,6 +32,20 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -52,6 +67,7 @@ public class LoginActivity extends AppCompatActivity {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
+                .requestProfile()
                 .build();
         final GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
@@ -186,13 +202,24 @@ public class LoginActivity extends AppCompatActivity {
         startActivityForResult(signInIntent, 1);
     }
 
+    private String readStream(InputStream is) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        BufferedReader r = new BufferedReader(new InputStreamReader(is),1000);
+        for (String line = r.readLine(); line != null; line =r.readLine()){
+            sb.append(line);
+        }
+        is.close();
+        return sb.toString();
+    }
+
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
 
             // Signed in successfully, show authenticated UI.
             updateUI(account);
-        } catch (ApiException e) {
+            updateBackend(account);
+        } catch (Exception e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             CharSequence text = e.toString();
@@ -204,5 +231,11 @@ public class LoginActivity extends AppCompatActivity {
             //Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
             //updateUI(null);
         }
+    }
+
+    private void updateBackend(GoogleSignInAccount acc) {
+        UpdateUsersTask myTask = new UpdateUsersTask(this);
+        myTask.execute(acc.getId(), acc.getEmail(), acc.getDisplayName(), acc.getPhotoUrl().toString());
+
     }
 }

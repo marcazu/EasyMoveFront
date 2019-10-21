@@ -35,6 +35,12 @@ dependencies {
 
     //Firebase
     implementation 'com.google.firebase:firebase-auth:19.1.0'
+
+    //Okhttpclient
+    // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
+    implementation 'com.squareup.okhttp3:okhttp:4.2.2'
+
+
 }
 
 apply plugin: 'com.google.gms.google-services'
