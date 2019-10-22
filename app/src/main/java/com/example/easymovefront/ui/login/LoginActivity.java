@@ -78,7 +78,7 @@ public class LoginActivity extends AppCompatActivity {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null) {
-            updateUI(account, false);
+            updateUI(account);
         }
         findViewById(R.id.sign_in_button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -193,10 +193,12 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void updateUI(GoogleSignInAccount account, boolean signOut) {
-        if (! signOut){
+    private void updateUI(GoogleSignInAccount account) {
+        if (account != null){
             final SignInButton googleButton = findViewById(R.id.sign_in_button);
-            googleButton.setVisibility(View.INVISIBLE);
+            googleButton.setVisibility(View.GONE);
+            final Button signOutButton = findViewById(R.id.signOut_button);
+            signOutButton.setVisibility(View.VISIBLE);
             setResult(Activity.RESULT_OK);
             CharSequence text = "Welcome";
             int duration = Toast.LENGTH_LONG;
@@ -205,10 +207,9 @@ public class LoginActivity extends AppCompatActivity {
             toast.show();
             //finish();
         } else {
-            final Button signOutButton = findViewById(R.id.signOut_button);
-            signOutButton.setVisibility(View.INVISIBLE);
-            final SignInButton googleButton = findViewById(R.id.sign_in_button);
-            googleButton.setVisibility(View.VISIBLE);
+            findViewById(R.id.signOut_button).setVisibility(View.GONE);
+            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+
             setResult(Activity.RESULT_OK);
             CharSequence text = "Signed Out";
             int duration = Toast.LENGTH_LONG;
@@ -243,7 +244,7 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        updateUI(null, true);
+                        updateUI(null);
                     }
                 });
     }
@@ -273,7 +274,7 @@ public class LoginActivity extends AppCompatActivity {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
 
             // Signed in successfully, show authenticated UI.
-            updateUI(account, false);
+            updateUI(account);
             updateBackend(account);
         } catch (Exception e) {
             // The ApiException status code indicates the detailed failure reason.
@@ -294,4 +295,19 @@ public class LoginActivity extends AppCompatActivity {
         myTask.execute(acc.getId(), acc.getEmail(), acc.getDisplayName(), acc.getPhotoUrl().toString());
 
     }
+
+
+    findViewById(R.id.signOut_button).setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick (View v){
+            switch (v.getId()) {
+                case R.id.sign_in_button:
+                    signIn(mGoogleSignInClient);
+                    break;
+                case R.id.signOut_button:
+                    signOut();
+                    break;
+            }
+        }
+    });
 }
