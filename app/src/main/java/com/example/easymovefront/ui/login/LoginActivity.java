@@ -53,7 +53,6 @@ import java.net.URL;
 public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
-    private GoogleSignInClient mGoogleSignInClient;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
                 .requestEmail()
                 .requestProfile()
                 .build();
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        final GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null) {
             updateUI(account);
@@ -97,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 switch (v.getId()) {
                     case R.id.signOut_button:
-                        signOut();
+                        signOut(mGoogleSignInClient);
                         break;
                     // ...
                 }
@@ -234,7 +233,7 @@ public class LoginActivity extends AppCompatActivity {
         startActivityForResult(signInIntent, 1);
     }
 
-    private void signOut() {
+    private void signOut(GoogleSignInClient mGoogleSignInClient) {
         /*final GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
@@ -297,17 +296,5 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    findViewById(R.id.signOut_button).setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick (View v){
-            switch (v.getId()) {
-                case R.id.sign_in_button:
-                    signIn(mGoogleSignInClient);
-                    break;
-                case R.id.signOut_button:
-                    signOut();
-                    break;
-            }
-        }
-    });
+
 }
