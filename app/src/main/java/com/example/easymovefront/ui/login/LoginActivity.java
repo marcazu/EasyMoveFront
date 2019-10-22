@@ -1,6 +1,8 @@
 package  com.example.easymovefront.ui.login;
 
 import android.app.Activity;
+
+import androidx.annotation.NonNull;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -31,6 +33,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import java.io.BufferedInputStream;
@@ -50,6 +53,7 @@ import java.net.URL;
 public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
+    private GoogleSignInClient mGoogleSignInClient;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,16 +67,18 @@ public class LoginActivity extends AppCompatActivity {
         final Button loginButton = findViewById(R.id.login);
         final SignInButton googleButton = findViewById(R.id.sign_in_button);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
+        final Button SignOut = findViewById(R.id.signOut_button);
+        SignOut.setVisibility(View.INVISIBLE);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .requestProfile()
                 .build();
-        final GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null) {
-            updateUI(account);
+            updateUI(account, false);
         }
         findViewById(R.id.sign_in_button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,6 +86,18 @@ public class LoginActivity extends AppCompatActivity {
                 switch (v.getId()) {
                     case R.id.sign_in_button:
                         signIn(mGoogleSignInClient);
+                        break;
+                    // ...
+                }
+            }
+        });
+
+        findViewById(R.id.signOut_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()) {
+                    case R.id.signOut_button:
+                        signOut();
                         break;
                     // ...
                 }
@@ -175,16 +193,29 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void updateUI(GoogleSignInAccount account) {
-        final SignInButton googleButton = findViewById(R.id.sign_in_button);
-        googleButton.setVisibility(View.INVISIBLE);
-        setResult(Activity.RESULT_OK);
-        CharSequence text = "Welcome";
-        int duration = Toast.LENGTH_LONG;
+    private void updateUI(GoogleSignInAccount account, boolean signOut) {
+        if (! signOut){
+            final SignInButton googleButton = findViewById(R.id.sign_in_button);
+            googleButton.setVisibility(View.INVISIBLE);
+            setResult(Activity.RESULT_OK);
+            CharSequence text = "Welcome";
+            int duration = Toast.LENGTH_LONG;
 
-        Toast toast = Toast.makeText(this, text, duration);
-        toast.show();
-        //finish();
+            Toast toast = Toast.makeText(this, text, duration);
+            toast.show();
+            //finish();
+        } else {
+            final Button signOutButton = findViewById(R.id.signOut_button);
+            signOutButton.setVisibility(View.INVISIBLE);
+            final SignInButton googleButton = findViewById(R.id.sign_in_button);
+            googleButton.setVisibility(View.VISIBLE);
+            setResult(Activity.RESULT_OK);
+            CharSequence text = "Signed Out";
+            int duration = Toast.LENGTH_LONG;
+
+            Toast toast = Toast.makeText(this, text, duration);
+            toast.show();
+        }
     }
 
     private void updateUiWithUser(LoggedInUserView model) {
@@ -202,6 +233,31 @@ public class LoginActivity extends AppCompatActivity {
         startActivityForResult(signInIntent, 1);
     }
 
+    private void signOut() {
+        /*final GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        final GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);*/
+        mGoogleSignInClient.signOut()
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        updateUI(null, true);
+                    }
+                });
+    }
+    /*
+    private void revokeAccess() {
+        mGoogleSignInClient.revokeAccess()
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        // ...
+                    }
+                });
+    }*/
+
     private String readStream(InputStream is) throws IOException {
         StringBuilder sb = new StringBuilder();
         BufferedReader r = new BufferedReader(new InputStreamReader(is),1000);
@@ -217,7 +273,7 @@ public class LoginActivity extends AppCompatActivity {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
 
             // Signed in successfully, show authenticated UI.
-            updateUI(account);
+            updateUI(account, false);
             updateBackend(account);
         } catch (Exception e) {
             // The ApiException status code indicates the detailed failure reason.

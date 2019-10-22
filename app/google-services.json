@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1027441080971-ddl8dhvrneafk96533qdqafaauuaso8a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.easymovefront",
+            "certificate_hash": "55543fc1e32310389ba81ac1f3a3b1d78b7f2682"
+          }
+        },
+        {
           "client_id": "1027441080971-49ne9661vhjjag0mq1nbtnftu4d1gole.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
