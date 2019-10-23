@@ -62,10 +62,13 @@ public class UpdateUsersTask extends AsyncTask<String, Void, Integer>
                 if (response.isSuccessful()) {
                     // Get back the response and convert it to a Book object
                     returnCode = 1;
-                    //mResponse = response.body().string();
+                    mResponse = response.body().string();
 
                 }
-                else returnCode = 0;
+                else {
+                    returnCode = 0;
+                    mResponse = response.body().string();
+                }
             }
 
         }
