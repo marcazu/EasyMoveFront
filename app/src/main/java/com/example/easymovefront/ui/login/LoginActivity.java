@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.easymovefront.R;
 import com.example.easymovefront.network.UpdateUsersTask;
+import com.example.easymovefront.ui.maps.MapsActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -149,6 +150,7 @@ public class LoginActivity extends AppCompatActivity {
             // Signed in successfully, show authenticated UI.
             updateUI();
             updateBackend(mUserAccount);
+            launchMaps();
         } catch (Exception e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
@@ -167,6 +169,11 @@ public class LoginActivity extends AppCompatActivity {
         UpdateUsersTask myTask = new UpdateUsersTask(this);
         myTask.execute(acc.getId(), acc.getEmail(), acc.getDisplayName(), acc.getPhotoUrl().toString());
 
+    }
+
+    public void launchMaps() {
+        Intent intent = new Intent(this, MapsActivity.class);
+        startActivity(intent);
     }
 
 
