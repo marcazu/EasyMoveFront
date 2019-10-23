@@ -49,7 +49,7 @@ public class LoginActivity extends AppCompatActivity {
         final GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         mUserAccount = GoogleSignIn.getLastSignedInAccount(this);
         if (mUserAccount != null) {
-            updateUI(mUserAccount);
+            updateUI();
         }
         findViewById(R.id.sign_in_button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,8 +89,8 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void updateUI(GoogleSignInAccount account) {
-        if (account != null){
+    private void updateUI() {
+        if (mUserAccount != null){
             final SignInButton googleButton = findViewById(R.id.sign_in_button);
             googleButton.setVisibility(View.GONE);
             final Button signOutButton = findViewById(R.id.signOut_button);
@@ -129,7 +129,8 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
         revokeAccess(mGoogleSignInClient);
-        updateUI(null);
+        mUserAccount = null;
+        updateUI();
     }
     private void revokeAccess(GoogleSignInClient mGoogleSignInClient) {
         mGoogleSignInClient.revokeAccess()
@@ -146,7 +147,7 @@ public class LoginActivity extends AppCompatActivity {
             mUserAccount = completedTask.getResult(ApiException.class);
 
             // Signed in successfully, show authenticated UI.
-            updateUI(mUserAccount);
+            updateUI();
             updateBackend(mUserAccount);
         } catch (Exception e) {
             // The ApiException status code indicates the detailed failure reason.
