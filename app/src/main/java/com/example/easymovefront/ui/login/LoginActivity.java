@@ -51,6 +51,7 @@ public class LoginActivity extends AppCompatActivity {
         mUserAccount = GoogleSignIn.getLastSignedInAccount(this);
         if (mUserAccount != null) {
             updateUI();
+            launchMaps();
         }
         findViewById(R.id.sign_in_button).setOnClickListener(new View.OnClickListener() {
             @Override
