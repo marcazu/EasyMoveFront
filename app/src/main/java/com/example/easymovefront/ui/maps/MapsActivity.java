@@ -24,6 +24,7 @@ import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -55,18 +56,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(41.385063, 2.173404);
-        LatLng destination = new LatLng(41.378533, 2.099841);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Barcelona"));
+
+        String og = String.format(Locale.ENGLISH, "%.8f,%.8f", 41.385063, 2.173404);
+        String dest = String.format(Locale.ENGLISH, "%.8f,%.8f", 41.378533, 2.099841);
         CameraUpdate location = CameraUpdateFactory.newLatLngZoom(
-                sydney, 15);
+                new LatLng(41.385063, 2.173404), 10);
         mMap.animateCamera(location);
         DateTime now = new DateTime();
         DirectionsResult result;
         try {
              result = DirectionsApi.newRequest(getGeoContext())
-                    .mode(TravelMode.WALKING).origin(sydney.toString())
-                    .destination(destination.toString()).departureTime(now)
+                    .mode(TravelMode.WALKING).origin(og)
+                    .destination(dest).departureTime(now)
                     .await();
 
             addMarkersToMap(result, mMap);
@@ -85,9 +86,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         GeoApiContext geoApiContext = new GeoApiContext();
         return geoApiContext.setQueryRateLimit(3)
                 .setApiKey(getString(R.string.google_maps_key))
-                .setConnectTimeout(1, TimeUnit.SECONDS)
-                .setReadTimeout(1, TimeUnit.SECONDS)
-                .setWriteTimeout(1, TimeUnit.SECONDS);
+                .setConnectTimeout(100, TimeUnit.SECONDS)
+                .setReadTimeout(100, TimeUnit.SECONDS)
+                .setWriteTimeout(100, TimeUnit.SECONDS);
     }
 
     private void addMarkersToMap(DirectionsResult results, GoogleMap mMap) {
