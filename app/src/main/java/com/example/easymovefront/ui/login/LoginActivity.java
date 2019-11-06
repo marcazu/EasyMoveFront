@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.easymovefront.R;
+import com.example.easymovefront.data.model.LoggedUser;
 import com.example.easymovefront.network.UpdateUsersTask;
 import com.example.easymovefront.ui.maps.MapsActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -28,16 +29,13 @@ import com.google.android.gms.tasks.Task;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private LoginViewModel loginViewModel;
-
-    public static GoogleSignInAccount mUserAccount;
+    public static LoggedUser mUserAccount;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        mUserAccount = LoggedUser.getInstance();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
-                .get(LoginViewModel.class);
         
         final Button SignOut = findViewById(R.id.signOut_button);
         SignOut.setVisibility(View.INVISIBLE);
@@ -48,8 +46,8 @@ public class LoginActivity extends AppCompatActivity {
                 .requestProfile()
                 .build();
         final GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-        mUserAccount = GoogleSignIn.getLastSignedInAccount(this);
-        if (mUserAccount != null) {
+        mUserAccount.setmUserAccount(GoogleSignIn.getLastSignedInAccount(this));
+        if (mUserAccount.getmUserAccount() != null) {
             updateUI();
             launchMaps();
         }
@@ -92,7 +90,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
-        if (mUserAccount != null){
+        if (mUserAccount.getmUserAccount() != null){
             final SignInButton googleButton = findViewById(R.id.sign_in_button);
             googleButton.setVisibility(View.GONE);
             final Button signOutButton = findViewById(R.id.signOut_button);
@@ -131,7 +129,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
         revokeAccess(mGoogleSignInClient);
-        mUserAccount = null;
+        mUserAccount.setmUserAccount(null);
         updateUI();
     }
     private void revokeAccess(GoogleSignInClient mGoogleSignInClient) {
@@ -146,7 +144,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
-            mUserAccount = completedTask.getResult(ApiException.class);
+            mUserAccount.setmUserAccount(completedTask.getResult(ApiException.class));
 
             // Signed in successfully, show authenticated UI.
             updateUI();
@@ -166,9 +164,10 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void updateBackend(GoogleSignInAccount acc) {
+    private void updateBackend(LoggedUser acc) {
+        GoogleSignInAccount aux = acc.getmUserAccount();
         UpdateUsersTask myTask = new UpdateUsersTask(this);
-        myTask.execute(acc.getId(), acc.getEmail(), acc.getDisplayName(), acc.getPhotoUrl().toString());
+        myTask.execute(aux.getId(), aux.getEmail(), aux.getDisplayName(), aux.getPhotoUrl().toString());
 
     }
 
