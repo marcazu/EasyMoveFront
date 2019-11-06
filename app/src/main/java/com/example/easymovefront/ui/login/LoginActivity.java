@@ -6,10 +6,13 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.preference.PreferenceManager;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -27,16 +30,21 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 public class LoginActivity extends AppCompatActivity {
 
     public static LoggedUser mUserAccount;
+    private SharedPreferences pref;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         mUserAccount = LoggedUser.getInstance();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        
+
         final Button SignOut = findViewById(R.id.signOut_button);
         SignOut.setVisibility(View.INVISIBLE);
 
@@ -48,6 +56,8 @@ public class LoginActivity extends AppCompatActivity {
         final GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         mUserAccount.setmUserAccount(GoogleSignIn.getLastSignedInAccount(this));
         if (mUserAccount.getmUserAccount() != null) {
+            pref = PreferenceManager.getDefaultSharedPreferences(this);
+            LoggedUser.getInstance().setId(pref.getString("id", "n/a"));
             updateUI();
             launchMaps();
         }
@@ -76,7 +86,6 @@ public class LoginActivity extends AppCompatActivity {
         });
 
     }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -149,6 +158,10 @@ public class LoginActivity extends AppCompatActivity {
             // Signed in successfully, show authenticated UI.
             updateUI();
             updateBackend(mUserAccount);
+            pref = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor edit = pref.edit();
+            edit.putString("id", LoggedUser.getInstance().getId());
+            edit.apply();
             launchMaps();
         } catch (Exception e) {
             // The ApiException status code indicates the detailed failure reason.
@@ -164,10 +177,11 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void updateBackend(LoggedUser acc) {
+    private void updateBackend(LoggedUser acc) throws ExecutionException, InterruptedException, TimeoutException {
         GoogleSignInAccount aux = acc.getmUserAccount();
         UpdateUsersTask myTask = new UpdateUsersTask(this);
         myTask.execute(aux.getId(), aux.getEmail(), aux.getDisplayName(), aux.getPhotoUrl().toString());
+        myTask.get(5000, TimeUnit.MILLISECONDS);
 
     }
 

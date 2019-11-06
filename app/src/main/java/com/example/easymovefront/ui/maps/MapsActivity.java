@@ -1,8 +1,13 @@
 package com.example.easymovefront.ui.maps;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.easymovefront.R;
 import com.google.android.gms.maps.CameraUpdate;
@@ -27,7 +32,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
 
@@ -39,6 +44,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_mapsactivity, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        CharSequence text;
+        int duration;
+        Toast toast;
+        switch (item.getItemId()) {
+            case R.id.profile:
+                text = "PROFILE PLACEHOLDER";
+                duration = Toast.LENGTH_LONG;
+
+                toast = Toast.makeText(this, text, duration);
+                toast.show();
+                return true;
+            case R.id.settings:
+                text = "SETTINGS PLACEHOLDER";
+                duration = Toast.LENGTH_LONG;
+
+                toast = Toast.makeText(this, text, duration);
+                toast.show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 

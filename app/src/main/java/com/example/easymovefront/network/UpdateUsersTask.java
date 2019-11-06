@@ -1,8 +1,12 @@
 package com.example.easymovefront.network;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.widget.Toast;
+
+import com.example.easymovefront.data.model.LoggedUser;
 
 import org.json.JSONObject;
 
@@ -63,6 +67,7 @@ public class UpdateUsersTask extends AsyncTask<String, Void, Integer>
                     // Get back the response and convert it to a Book object
                     returnCode = 1;
                     mResponse = response.body().string();
+                    LoggedUser.getInstance().setId(mResponse);
 
                 }
                 else {
