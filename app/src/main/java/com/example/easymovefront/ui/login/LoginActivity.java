@@ -39,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public static LoggedUser mUserAccount;
     private SharedPreferences pref;
-    private ProgressBar progressbar;
+    private ProgressBar loadingProgressBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        progressbar = (ProgressBar) findViewById(R.id.loading);
+         loadingProgressBar = findViewById(R.id.loading);
 
         final Button SignOut = findViewById(R.id.signOut_button);
         SignOut.setVisibility(View.INVISIBLE);
@@ -69,6 +69,7 @@ public class LoginActivity extends AppCompatActivity {
         findViewById(R.id.sign_in_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                loadingProgressBar.setVisibility(View.VISIBLE);
                 switch (v.getId()) {
                     case R.id.sign_in_button:
                         signIn(mGoogleSignInClient);
@@ -81,6 +82,7 @@ public class LoginActivity extends AppCompatActivity {
         findViewById(R.id.signOut_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                loadingProgressBar.setVisibility(View.VISIBLE);
                 switch (v.getId()) {
                     case R.id.signOut_button:
                         signOut(mGoogleSignInClient);
@@ -144,6 +146,7 @@ public class LoginActivity extends AppCompatActivity {
                 });
         revokeAccess(mGoogleSignInClient);
         mUserAccount.setmUserAccount(null);
+        loadingProgressBar.setVisibility(View.GONE);
         updateUI();
     }
     private void revokeAccess(GoogleSignInClient mGoogleSignInClient) {
@@ -158,6 +161,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
+            loadingProgressBar.setVisibility(View.GONE);
             mUserAccount.setmUserAccount(completedTask.getResult(ApiException.class));
 
             // Signed in successfully, show authenticated UI.
