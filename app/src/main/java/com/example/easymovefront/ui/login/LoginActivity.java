@@ -15,6 +15,7 @@ import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.easymovefront.R;
@@ -38,12 +39,15 @@ public class LoginActivity extends AppCompatActivity {
 
     public static LoggedUser mUserAccount;
     private SharedPreferences pref;
+    private ProgressBar progressbar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         mUserAccount = LoggedUser.getInstance();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        progressbar = (ProgressBar) findViewById(R.id.loading);
 
         final Button SignOut = findViewById(R.id.signOut_button);
         SignOut.setVisibility(View.INVISIBLE);
@@ -54,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
                 .requestProfile()
                 .build();
         final GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
         mUserAccount.setmUserAccount(GoogleSignIn.getLastSignedInAccount(this));
         if (mUserAccount.getmUserAccount() != null) {
             pref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -181,7 +186,7 @@ public class LoginActivity extends AppCompatActivity {
         GoogleSignInAccount aux = acc.getmUserAccount();
         UpdateUsersTask myTask = new UpdateUsersTask(this);
         myTask.execute(aux.getId(), aux.getEmail(), aux.getDisplayName(), aux.getPhotoUrl().toString());
-        myTask.get(5000, TimeUnit.MILLISECONDS);
+        myTask.get();
 
     }
 

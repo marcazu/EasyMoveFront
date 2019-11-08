@@ -1,9 +1,18 @@
 package com.example.easymovefront.ui.maps;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
+import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -32,9 +41,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener {
 
     private GoogleMap mMap;
+    private LocationManager mLocationManager;
+    String locationProvider;
+    private static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 11;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +56,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        //getting the toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        //setting the title
+        toolbar.setTitle("My Toolbar");
+
+        //placing toolbar in place of actionbar
+        setSupportActionBar(toolbar);
+
+        initializeLocationManager();
     }
 
     @Override
@@ -77,6 +99,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return super.onOptionsItemSelected(item);
         }
     }
+
+
 
 
     /**
@@ -118,6 +142,87 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
     }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+        Log.i("called", "onLocationChanged");
+
+
+        //when the location changes, update the map by zooming to the location
+        CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(),location.getLongitude()));
+        mMap.moveCamera(center);
+
+        CameraUpdate zoom=CameraUpdateFactory.zoomTo(15);
+        mMap.animateCamera(zoom);
+    }
+
+    @Override
+    public void onProviderDisabled(String arg0) {
+
+        Log.i("called", "onProviderDisabled");
+    }
+
+    @Override
+    public void onProviderEnabled(String arg0) {
+
+        Log.i("called", "onProviderEnabled");
+    }
+
+    @Override
+    public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+
+        Log.i("called", "onStatusChanged");
+    }
+
+
+
+    private void initializeLocationManager() {
+
+        //get the location manager
+        mLocationManager = (LocationManager)getSystemService(this.LOCATION_SERVICE);
+
+
+        //define the location manager criteria
+        Criteria criteria = new Criteria();
+
+        this.locationProvider = mLocationManager.getBestProvider(criteria, false);
+
+        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+
+            ActivityCompat.requestPermissions( this, new String[] {  android.Manifest.permission.ACCESS_COARSE_LOCATION  },
+                    MY_PERMISSION_ACCESS_COARSE_LOCATION );
+        }
+        else {
+            Location location = mLocationManager.getLastKnownLocation(locationProvider);
+
+
+            //initialize the location
+            if(location != null) {
+
+                onLocationChanged(location);
+            }
+        }
+
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+
+        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+            Location location = mLocationManager.getLastKnownLocation(locationProvider);
+
+
+            //initialize the location
+            if(location != null) {
+
+                onLocationChanged(location);
+            }
+        }
+    }
+
+
 
     private GeoApiContext getGeoContext() {
         GeoApiContext geoApiContext = new GeoApiContext();
