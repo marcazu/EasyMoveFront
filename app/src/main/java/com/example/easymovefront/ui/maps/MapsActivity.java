@@ -139,6 +139,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) == PackageManager.PERMISSION_GRANTED ) {
+            mMap.setMyLocationEnabled(true);
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                mUserLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                                CameraUpdate locationUser = CameraUpdateFactory.newLatLngZoom(mUserLocation, 10);
+                                mMap.animateCamera(locationUser);
+                            }
+                        }
+                    });
+        }
         CameraUpdate location = CameraUpdateFactory.newLatLngZoom(
                 new LatLng(41.385063, 2.173404), 10);
         mMap.animateCamera(location);
@@ -149,6 +164,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         Log.i("called", "onLocationChanged");
         mUserLocation = new LatLng(location.getLatitude(),location.getLongitude());
+
 
         //when the location changes, update the map by zooming to the location
         CameraUpdate center = CameraUpdateFactory.newLatLng(mUserLocation);
@@ -195,6 +211,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     MY_PERMISSION_ACCESS_COARSE_LOCATION );
         }
         else {
+
             Location location = mLocationManager.getLastKnownLocation(locationProvider);
 
 
@@ -212,14 +229,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
 
         if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
-            Location location = mLocationManager.getLastKnownLocation(locationProvider);
 
-
-            //initialize the location
-            if(location != null) {
-
-                onLocationChanged(location);
-            }
         }
         if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) == PackageManager.PERMISSION_GRANTED ) {
             mMap.setMyLocationEnabled(true);
