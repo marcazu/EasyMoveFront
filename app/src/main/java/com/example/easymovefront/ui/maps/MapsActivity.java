@@ -56,6 +56,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
         //getting the toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
@@ -115,7 +116,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
+        mMap.setMyLocationEnabled(true);
         // Add a marker in Sydney and move the camera
 
         String og = String.format(Locale.ENGLISH, "%.8f,%.8f", 41.385063, 2.173404);
