@@ -23,10 +23,14 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.easymovefront.R;
 import com.example.easymovefront.ui.dialog.RouteDialogFragment;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -35,6 +39,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.maps.DirectionsApi;
 import com.google.maps.GeoApiContext;
 import com.google.maps.android.PolyUtil;
@@ -56,9 +61,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LocationManager mLocationManager;
     String locationProvider;
     private static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 11;
-
-    private String src;
-    private String dest;
+    private LatLng mUserLocation;
+    private FusedLocationProviderClient fusedLocationClient;
+    private ProgressBar loadingProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +73,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         //getting the toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
@@ -77,6 +82,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //placing toolbar in place of actionbar
         setSupportActionBar(toolbar);
+
+        loadingProgressBar = findViewById(R.id.loading);
 
         initializeLocationManager();
     }
@@ -132,9 +139,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setMyLocationEnabled(true);
-        // Add a marker in Sydney and move the camera
-
         CameraUpdate location = CameraUpdateFactory.newLatLngZoom(
                 new LatLng(41.385063, 2.173404), 10);
         mMap.animateCamera(location);
@@ -144,10 +148,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onLocationChanged(Location location) {
 
         Log.i("called", "onLocationChanged");
-
+        mUserLocation = new LatLng(location.getLatitude(),location.getLongitude());
 
         //when the location changes, update the map by zooming to the location
-        CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(),location.getLongitude()));
+        CameraUpdate center = CameraUpdateFactory.newLatLng(mUserLocation);
         mMap.moveCamera(center);
 
         CameraUpdate zoom=CameraUpdateFactory.zoomTo(15);
@@ -217,41 +221,79 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 onLocationChanged(location);
             }
         }
+        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) == PackageManager.PERMISSION_GRANTED ) {
+            mMap.setMyLocationEnabled(true);
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                mUserLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                                CameraUpdate locationUser = CameraUpdateFactory.newLatLngZoom(mUserLocation, 10);
+                                mMap.animateCamera(locationUser);
+                            }
+                        }
+                    });
+        }
     }
 
     private void createRoute(String og2, String dest2) {
-
+        Address test = null;
+        Address test2 = null;
+        loadingProgressBar.setVisibility(View.VISIBLE);
         try {
             Geocoder geo = new Geocoder(this);
             List<Address> adressList = new LinkedList<>();
-            while (adressList.size() < 1) {
-                try {
+            try {
+                if (!og2.isEmpty()) {
                     adressList = geo.getFromLocationName(og2, 1);
+                    test = adressList.get(0);
                 }
-                catch (Exception e) {}
             }
+            catch (IndexOutOfBoundsException e) {
+                CharSequence text;
+                int duration;
+                Toast toast;
+                text = getString(R.string.address_source_notfound);
+                duration = Toast.LENGTH_LONG;
 
-            Address test = adressList.get(0);
+                toast = Toast.makeText(this, text, duration);
+                toast.show();
+            }
             List<Address> adressList2 = new LinkedList<>();
-            while (adressList2.size() < 1) {
-                try {
-                    adressList2 = geo.getFromLocationName(dest2, 1);
-                }
-                catch (Exception e) {}
+            try {
+                adressList2 = geo.getFromLocationName(dest2, 1);
+                test2 = adressList2.get(0);
             }
-            Address test2 = adressList2.get(0);
-            String og = String.format(Locale.ENGLISH, "%.8f,%.8f", test.getLatitude(), test.getLongitude());
-            String dest = String.format(Locale.ENGLISH, "%.8f,%.8f", test2.getLatitude(), test2.getLongitude());
+            catch (IndexOutOfBoundsException e) {
+                CharSequence text;
+                int duration;
+                Toast toast;
+                text = getString(R.string.address_destination_notfound);
+                duration = Toast.LENGTH_LONG;
 
-            DateTime now = new DateTime();
-            DirectionsResult result;
-            result = DirectionsApi.newRequest(getGeoContext())
-                    .mode(TravelMode.WALKING).origin(og)
-                    .destination(dest).departureTime(now)
-                    .await();
+                toast = Toast.makeText(this, text, duration);
+                toast.show();
+            }
+            if ((test != null && test2 != null) || (og2.isEmpty() && test2 != null &&
+                    ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) == PackageManager.PERMISSION_GRANTED)) {
+                String og;
+                if (!og2.isEmpty())
+                og = String.format(Locale.ENGLISH, "%.8f,%.8f", test.getLatitude(), test.getLongitude());
+                else og = String.format(Locale.ENGLISH, "%.8f,%.8f", mUserLocation.latitude, mUserLocation.longitude);
+                String dest = String.format(Locale.ENGLISH, "%.8f,%.8f", test2.getLatitude(), test2.getLongitude());
 
-            addMarkersToMap(result, mMap);
-            addPolyline(result, mMap);
+                DateTime now = new DateTime();
+                DirectionsResult result;
+                result = DirectionsApi.newRequest(getGeoContext())
+                        .mode(TravelMode.WALKING).origin(og)
+                        .destination(dest).departureTime(now)
+                        .await();
+
+                addMarkersToMap(result, mMap);
+                addPolyline(result, mMap);
+            }
         } catch (ApiException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -259,6 +301,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         } catch (IOException e) {
             e.printStackTrace();
         }
+        loadingProgressBar.setVisibility(View.GONE);
     }
 
     private GeoApiContext getGeoContext() {
@@ -286,14 +329,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onOkPressed(String src, String dest) {
-        CharSequence text;
-        int duration;
-        Toast toast;
-        text = src;
-        duration = Toast.LENGTH_LONG;
-
-        toast = Toast.makeText(this, text, duration);
-        toast.show();
         createRoute(src, dest);
     }
 }
