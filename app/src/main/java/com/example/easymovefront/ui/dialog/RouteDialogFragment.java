@@ -3,26 +3,19 @@ package com.example.easymovefront.ui.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.easymovefront.R;
-import com.example.easymovefront.ui.maps.MapsActivity;
-
-import okhttp3.Route;
 
 
 public class RouteDialogFragment extends DialogFragment {
@@ -34,7 +27,7 @@ public class RouteDialogFragment extends DialogFragment {
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(String src, String dest);
+        void onOkPressed(String src, String dest);
     }
 
     public RouteDialogFragment(Context context) {
@@ -57,7 +50,7 @@ public class RouteDialogFragment extends DialogFragment {
                         EditText src = editTextView.findViewById(R.id.source);
                         EditText dest = editTextView.findViewById(R.id.destination);
                         String test = src.getText().toString();
-                        mListener.onFragmentInteraction(test, dest.getText().toString());
+                        mListener.onOkPressed(test, dest.getText().toString());
                     }
                 })
                 .setNegativeButton(R.string.app_name, new DialogInterface.OnClickListener() {
@@ -78,7 +71,7 @@ public class RouteDialogFragment extends DialogFragment {
     // TODO: Rename method, update argument and hook method into UI event
    /* public void onButtonPressed(Uri uri) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onOkPressed(uri);
         }
     }*/
 
@@ -104,7 +97,7 @@ public class RouteDialogFragment extends DialogFragment {
         // Return input text to activity
         EditText src = v.findViewById(R.id.source);
         EditText dest = v.findViewById(R.id.destination);
-        mListener.onFragmentInteraction(src.getText().toString(), dest.getText().toString());
+        mListener.onOkPressed(src.getText().toString(), dest.getText().toString());
         this.dismiss();
         return true;
     }
@@ -114,7 +107,7 @@ public class RouteDialogFragment extends DialogFragment {
         if (mListener != null) {
             EditText src = v.findViewById(R.id.source);
             EditText dest = v.findViewById(R.id.destination);
-            mListener.onFragmentInteraction(src.getText().toString(), dest.getText().toString());
+            mListener.onOkPressed(src.getText().toString(), dest.getText().toString());
         }
     }^/
 

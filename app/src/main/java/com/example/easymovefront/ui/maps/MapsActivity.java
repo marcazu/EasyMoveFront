@@ -10,7 +10,9 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.location.Address;
 import android.location.Criteria;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -43,6 +45,7 @@ import com.google.maps.model.TravelMode;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -132,29 +135,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setMyLocationEnabled(true);
         // Add a marker in Sydney and move the camera
 
-        String og = String.format(Locale.ENGLISH, "%.8f,%.8f", 41.385063, 2.173404);
-        String dest = String.format(Locale.ENGLISH, "%.8f,%.8f", 41.378533, 2.099841);
         CameraUpdate location = CameraUpdateFactory.newLatLngZoom(
                 new LatLng(41.385063, 2.173404), 10);
         mMap.animateCamera(location);
-        DateTime now = new DateTime();
-        DirectionsResult result;
-        try {
-             result = DirectionsApi.newRequest(getGeoContext())
-                    .mode(TravelMode.WALKING).origin(og)
-                    .destination(dest).departureTime(now)
-                    .await();
-
-            addMarkersToMap(result, mMap);
-            addPolyline(result, mMap);
-        } catch (ApiException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
     }
 
     @Override
@@ -236,7 +219,47 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    private void createRoute(String og2, String dest2) {
 
+        try {
+            Geocoder geo = new Geocoder(this);
+            List<Address> adressList = new LinkedList<>();
+            while (adressList.size() < 1) {
+                try {
+                    adressList = geo.getFromLocationName(og2, 1);
+                }
+                catch (Exception e) {}
+            }
+
+            Address test = adressList.get(0);
+            List<Address> adressList2 = new LinkedList<>();
+            while (adressList2.size() < 1) {
+                try {
+                    adressList2 = geo.getFromLocationName(dest2, 1);
+                }
+                catch (Exception e) {}
+            }
+            Address test2 = adressList2.get(0);
+            String og = String.format(Locale.ENGLISH, "%.8f,%.8f", test.getLatitude(), test.getLongitude());
+            String dest = String.format(Locale.ENGLISH, "%.8f,%.8f", test2.getLatitude(), test2.getLongitude());
+
+            DateTime now = new DateTime();
+            DirectionsResult result;
+            result = DirectionsApi.newRequest(getGeoContext())
+                    .mode(TravelMode.WALKING).origin(og)
+                    .destination(dest).departureTime(now)
+                    .await();
+
+            addMarkersToMap(result, mMap);
+            addPolyline(result, mMap);
+        } catch (ApiException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private GeoApiContext getGeoContext() {
         GeoApiContext geoApiContext = new GeoApiContext();
@@ -249,7 +272,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void addMarkersToMap(DirectionsResult results, GoogleMap mMap) {
         mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].startLocation.lat,results.routes[0].legs[0].startLocation.lng)).title(results.routes[0].legs[0].startAddress));
-        mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng)).title(results.routes[0].legs[0].startAddress).snippet(getEndLocationTitle(results)));
+        mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng)).title(results.routes[0].legs[0].endAddress).snippet(getEndLocationTitle(results)));
     }
 
     private String getEndLocationTitle(DirectionsResult results){
@@ -262,7 +285,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
-    public void onFragmentInteraction(String src, String dest) {
+    public void onOkPressed(String src, String dest) {
         CharSequence text;
         int duration;
         Toast toast;
@@ -271,5 +294,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         toast = Toast.makeText(this, text, duration);
         toast.show();
+        createRoute(src, dest);
     }
 }
