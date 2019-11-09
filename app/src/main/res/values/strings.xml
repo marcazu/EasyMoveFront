@@ -17,6 +17,8 @@
     <string name="Destination">Destination</string>
     <string name="address_source_notfound">Couldn\'t find any source with that address</string>
     <string name="address_destination_notfound">Couldn\'t find any destination with that address</string>
+    <string name="okButton">Confirm)</string>
+    <string name="cancelButton">Cancel</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

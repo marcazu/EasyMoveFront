@@ -44,7 +44,7 @@ public class RouteDialogFragment extends DialogFragment {
         // Pass null as the parent view because its going in the dialog layout
         builder.setView(editTextView)
                 // Add action buttons
-                .setPositiveButton(R.string.app_name, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.okButton, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         EditText src = editTextView.findViewById(R.id.source);
@@ -53,7 +53,7 @@ public class RouteDialogFragment extends DialogFragment {
                         mListener.onOkPressed(test, dest.getText().toString());
                     }
                 })
-                .setNegativeButton(R.string.app_name, new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.cancelButton, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                     }
                 });

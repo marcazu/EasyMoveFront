@@ -37,7 +37,9 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.maps.DirectionsApi;
@@ -50,6 +52,7 @@ import com.google.maps.model.TravelMode;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -64,6 +67,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LatLng mUserLocation;
     private FusedLocationProviderClient fusedLocationClient;
     private ProgressBar loadingProgressBar;
+
+    List<Polyline> polylines = new ArrayList<Polyline>();
+    List<Marker> markers = new ArrayList<Marker>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -248,6 +254,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    private void clearMap() {
+        for(Polyline line : polylines)
+        {
+            line.remove();
+        }
+
+        polylines.clear();
+
+        for(Marker mark : markers)
+        {
+            mark.remove();
+        }
+
+        markers.clear();
+    }
+
     private void createRoute(String og2, String dest2) {
         Address test = null;
         Address test2 = null;
@@ -324,8 +346,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void addMarkersToMap(DirectionsResult results, GoogleMap mMap) {
-        mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].startLocation.lat,results.routes[0].legs[0].startLocation.lng)).title(results.routes[0].legs[0].startAddress));
-        mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng)).title(results.routes[0].legs[0].endAddress).snippet(getEndLocationTitle(results)));
+        markers.add(mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].startLocation.lat,results.routes[0].legs[0].startLocation.lng)).title(results.routes[0].legs[0].startAddress)));
+        markers.add(mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng)).title(results.routes[0].legs[0].endAddress).snippet(getEndLocationTitle(results))));
     }
 
     private String getEndLocationTitle(DirectionsResult results){
@@ -334,11 +356,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void addPolyline(DirectionsResult results, GoogleMap mMap) {
         List<LatLng> decodedPath = PolyUtil.decode(results.routes[0].overviewPolyline.getEncodedPath());
-        mMap.addPolyline(new PolylineOptions().addAll(decodedPath));
+        polylines.add(mMap.addPolyline(new PolylineOptions().addAll(decodedPath)));
     }
 
     @Override
     public void onOkPressed(String src, String dest) {
+        clearMap();
         createRoute(src, dest);
     }
 }

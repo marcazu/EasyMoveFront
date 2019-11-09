@@ -18,6 +18,17 @@ tools:context=".ui.maps.MapsActivity">
     android:layout_height="wrap_content"
     android:layout_below="@id/toolbar">
 
+    <ProgressBar
+        android:id="@+id/loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="64dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="64dp"
+        android:visibility="gone"
+        />
 
 </LinearLayout>
 
@@ -30,18 +41,6 @@ tools:context=".ui.maps.MapsActivity">
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize"
         tools:context=".ui.maps.MapsActivity" />
-    <ProgressBar
-        android:id="@+id/loading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="64dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="64dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:visibility="gone"
-         />
+
 
 </RelativeLayout>
