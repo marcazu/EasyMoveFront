@@ -1,24 +1,30 @@
 package com.example.easymovefront.ui.maps;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.easymovefront.R;
+import com.example.easymovefront.ui.dialog.RouteDialogFragment;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -41,12 +47,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener, RouteDialogFragment.OnFragmentInteractionListener {
 
     private GoogleMap mMap;
     private LocationManager mLocationManager;
     String locationProvider;
     private static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 11;
+
+    private String src;
+    private String dest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +70,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         //setting the title
-        toolbar.setTitle("My Toolbar");
+        toolbar.setTitle("");
 
         //placing toolbar in place of actionbar
         setSupportActionBar(toolbar);
@@ -82,6 +91,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         int duration;
         Toast toast;
         switch (item.getItemId()) {
+            case R.id.route:
+                DialogFragment newFragment = new RouteDialogFragment(this);
+                newFragment.show(getSupportFragmentManager(), "kek");
+                return true;
             case R.id.profile:
                 text = "PROFILE PLACEHOLDER";
                 duration = Toast.LENGTH_LONG;
@@ -246,5 +259,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void addPolyline(DirectionsResult results, GoogleMap mMap) {
         List<LatLng> decodedPath = PolyUtil.decode(results.routes[0].overviewPolyline.getEncodedPath());
         mMap.addPolyline(new PolylineOptions().addAll(decodedPath));
+    }
+
+    @Override
+    public void onFragmentInteraction(String src, String dest) {
+        CharSequence text;
+        int duration;
+        Toast toast;
+        text = src;
+        duration = Toast.LENGTH_LONG;
+
+        toast = Toast.makeText(this, text, duration);
+        toast.show();
     }
 }
