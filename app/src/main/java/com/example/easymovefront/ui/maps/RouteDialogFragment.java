@@ -1,4 +1,4 @@
-package com.example.easymovefront.ui.dialog;
+package com.example.easymovefront.ui.maps;
 
 import android.app.Dialog;
 import android.content.Context;
