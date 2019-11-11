@@ -5,12 +5,6 @@
     >
     <item android:id="@+id/route"
         android:icon="@drawable/route3"
-        android:title="@string/Profile"
+        android:title="@string/Route"
         EasyMoveFront:showAsAction="ifRoom"/>
-    <item android:id="@+id/profile"
-        android:icon="@drawable/logo"
-        android:title="@string/Profile"/>
-    <item android:id="@+id/settings"
-        android:icon="@drawable/logo"
-        android:title="@string/Settings" />
 </menu>

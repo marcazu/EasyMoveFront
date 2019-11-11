@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
@@ -28,6 +29,8 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.easymovefront.R;
+import com.example.easymovefront.network.CreateMarkerTask;
+import com.example.easymovefront.network.UpdateUsersTask;
 import com.example.easymovefront.ui.dialog.RouteDialogFragment;
 import com.example.easymovefront.ui.obstacle.ObstacleDialogFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -38,9 +41,12 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.navigation.NavigationView;
 import com.google.maps.DirectionsApi;
 import com.google.maps.GeoApiContext;
 import com.google.maps.android.PolyUtil;
@@ -51,6 +57,7 @@ import com.google.maps.model.TravelMode;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -64,7 +71,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 11;
     private LatLng mUserLocation;
     private FusedLocationProviderClient fusedLocationClient;
-    private ProgressBar loadingProgressBar;
+    DrawerLayout dLayout;
+
+    List<Polyline> polylines = new ArrayList<Polyline>();
+    List<Marker> markers = new ArrayList<Marker>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,9 +94,45 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //placing toolbar in place of actionbar
         setSupportActionBar(toolbar);
 
-        loadingProgressBar = findViewById(R.id.loading);
+
+        setNavigationDrawer();
 
         initializeLocationManager();
+    }
+
+    private void setNavigationDrawer() {
+        dLayout = (DrawerLayout) findViewById(R.id.drawer_layout); // initiate a DrawerLayout
+        NavigationView navView = (NavigationView) findViewById(R.id.navigation); // initiate a Navigation View
+        // implement setNavigationItemSelectedListener event on NavigationView
+        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+                CharSequence text;
+                int duration;
+                Toast toast;
+                // check selected menu item's id and replace a Fragment Accordingly
+                switch (menuItem.getItemId()) {
+                    case R.id.profile:
+                        text = "PROFILE PLACEHOLDER";
+                        duration = Toast.LENGTH_LONG;
+
+                        toast = Toast.makeText(getApplicationContext(), text, duration);
+                        toast.show();
+                        CreateMarkerTask myTask = new CreateMarkerTask(getApplicationContext());
+                        myTask.execute("test marker2", "urlfoto2", "2", "22", "33", "test nom2");
+                        return true;
+                    case R.id.settings:
+                        text = "SETTINGS PLACEHOLDER";
+                        duration = Toast.LENGTH_LONG;
+
+                        toast = Toast.makeText(getApplicationContext(), text, duration);
+                        toast.show();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
     }
 
     @Override
@@ -105,20 +151,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             case R.id.route:
                 DialogFragment newFragment = new RouteDialogFragment(this);
                 newFragment.show(getSupportFragmentManager(), "kek");
-                return true;
-            case R.id.profile:
-                text = "PROFILE PLACEHOLDER";
-                duration = Toast.LENGTH_LONG;
-
-                toast = Toast.makeText(this, text, duration);
-                toast.show();
-                return true;
-            case R.id.settings:
-                text = "SETTINGS PLACEHOLDER";
-                duration = Toast.LENGTH_LONG;
-
-                toast = Toast.makeText(this, text, duration);
-                toast.show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -140,6 +172,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) == PackageManager.PERMISSION_GRANTED ) {
+            mMap.setMyLocationEnabled(true);
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                mUserLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                                CameraUpdate locationUser = CameraUpdateFactory.newLatLngZoom(mUserLocation, 10);
+                                mMap.animateCamera(locationUser);
+                            }
+                        }
+                    });
+        }
         CameraUpdate location = CameraUpdateFactory.newLatLngZoom(
                 new LatLng(41.385063, 2.173404), 10);
         mMap.animateCamera(location);
@@ -150,6 +197,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         Log.i("called", "onLocationChanged");
         mUserLocation = new LatLng(location.getLatitude(),location.getLongitude());
+
 
         //when the location changes, update the map by zooming to the location
         CameraUpdate center = CameraUpdateFactory.newLatLng(mUserLocation);
@@ -196,6 +244,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     MY_PERMISSION_ACCESS_COARSE_LOCATION );
         }
         else {
+
             Location location = mLocationManager.getLastKnownLocation(locationProvider);
 
 
@@ -213,14 +262,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
 
         if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
-            Location location = mLocationManager.getLastKnownLocation(locationProvider);
 
-
-            //initialize the location
-            if(location != null) {
-
-                onLocationChanged(location);
-            }
         }
         if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) == PackageManager.PERMISSION_GRANTED ) {
             mMap.setMyLocationEnabled(true);
@@ -277,12 +319,25 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             }
         }
+    private void clearMap() {
+        for(Polyline line : polylines)
+        {
+            line.remove();
+        }
+
+        polylines.clear();
+
+        for(Marker mark : markers)
+        {
+            mark.remove();
+        }
+
+        markers.clear();
     }
 
     private void createRoute(String og2, String dest2) {
         Address test = null;
         Address test2 = null;
-        loadingProgressBar.setVisibility(View.VISIBLE);
         try {
             Geocoder geo = new Geocoder(this);
             List<Address> adressList = new LinkedList<>();
@@ -342,7 +397,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         } catch (IOException e) {
             e.printStackTrace();
         }
-        loadingProgressBar.setVisibility(View.GONE);
     }
 
 
@@ -357,8 +411,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void addMarkersToMap(DirectionsResult results, GoogleMap mMap) {
-        mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].startLocation.lat,results.routes[0].legs[0].startLocation.lng)).title(results.routes[0].legs[0].startAddress));
-        mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng)).title(results.routes[0].legs[0].endAddress).snippet(getEndLocationTitle(results)));
+        markers.add(mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].startLocation.lat,results.routes[0].legs[0].startLocation.lng)).title(results.routes[0].legs[0].startAddress)));
+        markers.add(mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng)).title(results.routes[0].legs[0].endAddress).snippet(getEndLocationTitle(results))));
     }
 
     private String getEndLocationTitle(DirectionsResult results){
@@ -367,11 +421,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void addPolyline(DirectionsResult results, GoogleMap mMap) {
         List<LatLng> decodedPath = PolyUtil.decode(results.routes[0].overviewPolyline.getEncodedPath());
-        mMap.addPolyline(new PolylineOptions().addAll(decodedPath));
+        polylines.add(mMap.addPolyline(new PolylineOptions().addAll(decodedPath)));
     }
 
     @Override
     public void onOkPressed(String src, String dest) {
+        clearMap();
         createRoute(src, dest);
     }
 
