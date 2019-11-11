@@ -44,6 +44,9 @@ dependencies {
     // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
     implementation 'com.squareup.okhttp3:okhttp:4.2.2'
 
+    //Drawer Layout
+    implementation 'androidx.drawerlayout:drawerlayout:1.0.0'
+
     //directions
     implementation 'com.google.maps:google-maps-services:0.1.20'
 

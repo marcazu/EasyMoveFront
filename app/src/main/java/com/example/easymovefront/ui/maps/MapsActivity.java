@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import com.example.easymovefront.R;
 import com.example.easymovefront.ui.dialog.RouteDialogFragment;
+import com.example.easymovefront.ui.obstacle.ObstacleDialogFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
@@ -55,7 +56,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener, RouteDialogFragment.OnFragmentInteractionListener {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener, RouteDialogFragment.OnFragmentInteractionListener, ObstacleDialogFragment.OnFragmentInteractionListener {
 
     private GoogleMap mMap;
     private LocationManager mLocationManager;
@@ -238,6 +239,46 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    private void createObstacle (String pos) {
+        Address posicio = null;
+        loadingProgressBar.setVisibility(View.VISIBLE);
+        try {
+            Geocoder geo = new Geocoder(this);
+
+            try {
+                if (!pos.isEmpty()) {
+                    List<Address> addresses = geo.getFromLocationName(pos, 1);
+                    posicio = addresses.get(0);
+                }
+            } catch (IOException e) {
+                //e.printStackTrace();
+                CharSequence text;
+                int duration;
+                Toast toast;
+                text = getString(R.string.address_source_notfound);
+                duration = Toast.LENGTH_LONG;
+
+                toast = Toast.makeText(this, text, duration);
+                toast.show();
+            }
+            if (ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION )
+                    == PackageManager.PERMISSION_GRANTED) {
+                if (pos.isEmpty())
+                    String loc = String.format(Locale.ENGLISH, "%.8f,%.8f", mUserLocation.latitude, mUserLocation.longitude);
+                else {
+                    //IMPLEMENTAR AMB DIRECCIO
+                }
+
+                var marker = new google.maps.Marker({
+                        position: myLatLng,
+                        map: map,
+                        title: 'Hello World!'
+  });
+
+            }
+        }
+    }
+
     private void createRoute(String og2, String dest2) {
         Address test = null;
         Address test2 = null;
@@ -304,6 +345,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         loadingProgressBar.setVisibility(View.GONE);
     }
 
+
+
     private GeoApiContext getGeoContext() {
         GeoApiContext geoApiContext = new GeoApiContext();
         return geoApiContext.setQueryRateLimit(3)
@@ -330,5 +373,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onOkPressed(String src, String dest) {
         createRoute(src, dest);
+    }
+
+    @Override
+    public void onOkPressedObstacle(String pos) {
+        createObstacle(pos);
     }
 }
