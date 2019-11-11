@@ -11,13 +11,14 @@
     <string name="login_failed">"Login failed"</string>
     <string name="title_activity_maps">Map</string>
     <string name="options_menu">Options</string>
+    <string name="Route">Routes</string>
     <string name="Profile">Profile</string>
     <string name="Settings">Settings</string>
     <string name="Source">Source (Empty for current position)</string>
     <string name="Destination">Destination</string>
     <string name="address_source_notfound">Couldn\'t find any source with that address</string>
     <string name="address_destination_notfound">Couldn\'t find any destination with that address</string>
-    <string name="okButton">Confirm)</string>
+    <string name="okButton">Confirm</string>
     <string name="cancelButton">Cancel</string>
 
     <!-- TODO: Remove or change this placeholder text -->

@@ -49,6 +49,9 @@ dependencies {
 
     implementation 'com.google.maps.android:android-maps-utils:0.6.2'
 
+    //drawerlayout
+    implementation "androidx.drawerlayout:drawerlayout:1.0.0"
+
 
 }
 

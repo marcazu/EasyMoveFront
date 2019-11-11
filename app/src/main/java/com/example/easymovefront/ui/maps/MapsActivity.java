@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
@@ -28,6 +29,8 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.easymovefront.R;
+import com.example.easymovefront.network.CreateMarkerTask;
+import com.example.easymovefront.network.UpdateUsersTask;
 import com.example.easymovefront.ui.dialog.RouteDialogFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -42,6 +45,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.navigation.NavigationView;
 import com.google.maps.DirectionsApi;
 import com.google.maps.GeoApiContext;
 import com.google.maps.android.PolyUtil;
@@ -66,7 +70,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 11;
     private LatLng mUserLocation;
     private FusedLocationProviderClient fusedLocationClient;
-    private ProgressBar loadingProgressBar;
+    DrawerLayout dLayout;
 
     List<Polyline> polylines = new ArrayList<Polyline>();
     List<Marker> markers = new ArrayList<Marker>();
@@ -89,9 +93,45 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //placing toolbar in place of actionbar
         setSupportActionBar(toolbar);
 
-        loadingProgressBar = findViewById(R.id.loading);
+
+        setNavigationDrawer();
 
         initializeLocationManager();
+    }
+
+    private void setNavigationDrawer() {
+        dLayout = (DrawerLayout) findViewById(R.id.drawer_layout); // initiate a DrawerLayout
+        NavigationView navView = (NavigationView) findViewById(R.id.navigation); // initiate a Navigation View
+        // implement setNavigationItemSelectedListener event on NavigationView
+        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+                CharSequence text;
+                int duration;
+                Toast toast;
+                // check selected menu item's id and replace a Fragment Accordingly
+                switch (menuItem.getItemId()) {
+                    case R.id.profile:
+                        text = "PROFILE PLACEHOLDER";
+                        duration = Toast.LENGTH_LONG;
+
+                        toast = Toast.makeText(getApplicationContext(), text, duration);
+                        toast.show();
+                        CreateMarkerTask myTask = new CreateMarkerTask(getApplicationContext());
+                        myTask.execute("test marker2", "urlfoto2", "2", "22", "33", "test nom2");
+                        return true;
+                    case R.id.settings:
+                        text = "SETTINGS PLACEHOLDER";
+                        duration = Toast.LENGTH_LONG;
+
+                        toast = Toast.makeText(getApplicationContext(), text, duration);
+                        toast.show();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
     }
 
     @Override
@@ -110,20 +150,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             case R.id.route:
                 DialogFragment newFragment = new RouteDialogFragment(this);
                 newFragment.show(getSupportFragmentManager(), "kek");
-                return true;
-            case R.id.profile:
-                text = "PROFILE PLACEHOLDER";
-                duration = Toast.LENGTH_LONG;
-
-                toast = Toast.makeText(this, text, duration);
-                toast.show();
-                return true;
-            case R.id.settings:
-                text = "SETTINGS PLACEHOLDER";
-                duration = Toast.LENGTH_LONG;
-
-                toast = Toast.makeText(this, text, duration);
-                toast.show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -273,7 +299,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void createRoute(String og2, String dest2) {
         Address test = null;
         Address test2 = null;
-        loadingProgressBar.setVisibility(View.VISIBLE);
         try {
             Geocoder geo = new Geocoder(this);
             List<Address> adressList = new LinkedList<>();
@@ -333,7 +358,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         } catch (IOException e) {
             e.printStackTrace();
         }
-        loadingProgressBar.setVisibility(View.GONE);
     }
 
     private GeoApiContext getGeoContext() {
