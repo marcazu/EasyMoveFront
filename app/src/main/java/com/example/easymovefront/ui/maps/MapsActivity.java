@@ -1,15 +1,12 @@
 package com.example.easymovefront.ui.maps;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentActivity;
 
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Criteria;
@@ -17,22 +14,16 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.easymovefront.R;
+import com.example.easymovefront.data.model.LoggedUser;
 import com.example.easymovefront.network.CreateMarkerTask;
-import com.example.easymovefront.network.UpdateUsersTask;
 import com.example.easymovefront.ui.dialog.RouteDialogFragment;
-import com.example.easymovefront.ui.obstacle.ObstacleDialogFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
@@ -40,6 +31,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -118,8 +110,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                         toast = Toast.makeText(getApplicationContext(), text, duration);
                         toast.show();
-                        CreateMarkerTask myTask = new CreateMarkerTask(getApplicationContext());
-                        myTask.execute("test marker2", "urlfoto2", "2", "22", "33", "test nom2");
                         return true;
                     case R.id.settings:
                         text = "SETTINGS PLACEHOLDER";
@@ -151,6 +141,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             case R.id.route:
                 DialogFragment newFragment = new RouteDialogFragment(this);
                 newFragment.show(getSupportFragmentManager(), "kek");
+                return true;
+            case R.id.obstacle:
+                DialogFragment newFragment2 = new ObstacleDialogFragment(this);
+                newFragment2.show(getSupportFragmentManager(), "kok");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -281,9 +275,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    private void createObstacle (String pos) {
+    private void createObstacle(String pos, String desc, String foto, String title) {
         Address posicio = null;
-        loadingProgressBar.setVisibility(View.VISIBLE);
         try {
             Geocoder geo = new Geocoder(this);
 
@@ -303,22 +296,34 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 toast = Toast.makeText(this, text, duration);
                 toast.show();
             }
-            if (ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION )
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
+
+                LatLng loc = null;
                 if (pos.isEmpty())
-                    String loc = String.format(Locale.ENGLISH, "%.8f,%.8f", mUserLocation.latitude, mUserLocation.longitude);
+                    loc = new LatLng(mUserLocation.latitude, mUserLocation.longitude);
                 else {
                     //IMPLEMENTAR AMB DIRECCIO
                 }
+                mMap.addMarker(new MarkerOptions()
+                        .position(loc)
+                        .title(title)
+                        .snippet(desc)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
 
-                var marker = new google.maps.Marker({
-                        position: myLatLng,
-                        map: map,
-                        title: 'Hello World!'
-  });
+                addMarkerToBack(desc, "", loc.latitude, loc.longitude, title);
 
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
+
+    private void addMarkerToBack(String desc, String urlFoto, double latitude, double longitude, String title){
+        CreateMarkerTask myTask = new CreateMarkerTask(getApplicationContext());
+        myTask.execute(desc, urlFoto, LoggedUser.getInstance().getId().toString(), String.valueOf(latitude), String.valueOf(longitude), title);
+    }
+
     private void clearMap() {
         for(Polyline line : polylines)
         {
@@ -431,7 +436,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
-    public void onOkPressedObstacle(String pos) {
-        createObstacle(pos);
+    public void onOkPressedObstacle(String pos, String desc, String foto, String title) {
+        createObstacle(pos, desc, foto, title);
     }
 }

@@ -1,4 +1,4 @@
-package com.example.easymovefront.ui.obstacle;
+package com.example.easymovefront.ui.maps;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -27,7 +27,7 @@ public class ObstacleDialogFragment extends DialogFragment {
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onOkPressedObstacle(String pos);
+        void onOkPressedObstacle(String pos, String desc, String foto, String title);
     }
 
     public ObstacleDialogFragment(Context context) {
@@ -44,13 +44,19 @@ public class ObstacleDialogFragment extends DialogFragment {
         // Pass null as the parent view because its going in the dialog layout
         builder.setView(editTextView)
                 // Add action buttons
-                .setPositiveButton(R.string.app_name, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        EditText src = editTextView.findViewById(R.id.source);
-                        String test = src.getText().toString();
-                        mListener.onOkPressed(test, dest.getText().toString());
-                    }
+                .setPositiveButton(R.string.okButton, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                EditText loc = editTextView.findViewById(R.id.location);
+                                EditText desc = editTextView.findViewById(R.id.description);
+                                EditText photo = null; //editTextView.findViewById(R.id.photo);
+                                EditText tit = editTextView.findViewById(R.id.title);
+                                String locat = "";
+                                String description = desc.getText().toString();
+                                String photography = null;
+                                String title = tit.getText().toString();
+                                mListener.onOkPressedObstacle(locat, description, photography, title);
+                            }
                 })
                 .setNegativeButton(R.string.app_name, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -90,17 +96,6 @@ public class ObstacleDialogFragment extends DialogFragment {
         super.onDetach();
         mListener = null;
     }
-
-    /*@Override*/
-    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        // Return input text to activity
-        EditText src = v.findViewById(R.id.source);
-        EditText dest = v.findViewById(R.id.destination);
-        mListener.onOkPressed(src.getText().toString(), dest.getText().toString());
-        this.dismiss();
-        return true;
-    }
-
 
     /*public void getText(View v) {
         if (mListener != null) {

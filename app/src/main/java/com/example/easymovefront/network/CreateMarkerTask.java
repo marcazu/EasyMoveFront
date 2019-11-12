@@ -47,7 +47,7 @@ public class CreateMarkerTask extends AsyncTask<String, Void, Integer>
             JSONObject json = new JSONObject();
             json.put("descripcio", strings[0]);
             json.put("foto", strings[1]);
-            json.put("id", strings[2]);
+            json.put("idUsuariCreador", strings[2]);
             json.put("latitud", strings[3]);
             json.put("longitud", strings[4]);
             json.put("nom", strings[5]);

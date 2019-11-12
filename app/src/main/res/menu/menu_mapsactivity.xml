@@ -7,4 +7,9 @@
         android:icon="@drawable/route3"
         android:title="@string/Route"
         EasyMoveFront:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/obstacle"
+        android:icon="@drawable/logo"
+        android:title="@string/Obstacle"
+        EasyMoveFront:showAsAction="ifRoom"/>
 </menu>
