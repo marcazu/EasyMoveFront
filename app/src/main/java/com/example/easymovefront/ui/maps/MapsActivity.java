@@ -1,11 +1,13 @@
 package com.example.easymovefront.ui.maps;
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.DialogFragment;
+import androidx.navigation.ui.AppBarConfiguration;
 
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -18,6 +20,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.example.easymovefront.R;
@@ -60,6 +63,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 11;
     private LatLng mUserLocation;
     private FusedLocationProviderClient fusedLocationClient;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private Toolbar mToolbar;
     DrawerLayout dLayout;
 
     List<Polyline> polylines = new ArrayList<Polyline>();
@@ -75,14 +80,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         //getting the toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
         //setting the title
-        toolbar.setTitle("");
-
-        //placing toolbar in place of actionbar
-        setSupportActionBar(toolbar);
-
+        mToolbar.setTitle("");
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         setNavigationDrawer();
 
@@ -91,6 +95,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void setNavigationDrawer() {
         dLayout = (DrawerLayout) findViewById(R.id.drawer_layout); // initiate a DrawerLayout
+        mDrawerToggle = new ActionBarDrawerToggle(this, dLayout, mToolbar,R.string.drawer_open, R.string.drawer_close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+
+                invalidateOptionsMenu();
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+
+                invalidateOptionsMenu();
+            }
+        };
+        dLayout.addDrawerListener(mDrawerToggle);
         NavigationView navView = (NavigationView) findViewById(R.id.navigation); // initiate a Navigation View
         // implement setNavigationItemSelectedListener event on NavigationView
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -133,6 +153,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
+
         CharSequence text;
         int duration;
         Toast toast;
