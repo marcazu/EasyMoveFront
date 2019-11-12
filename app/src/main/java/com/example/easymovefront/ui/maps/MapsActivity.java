@@ -321,7 +321,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void addMarkerToBack(String desc, String urlFoto, double latitude, double longitude, String title){
         CreateMarkerTask myTask = new CreateMarkerTask(getApplicationContext());
-        myTask.execute(desc, urlFoto, LoggedUser.getInstance().getId().toString(), String.valueOf(latitude), String.valueOf(longitude), title);
+        myTask.execute(desc, urlFoto, LoggedUser.getInstance().getId(), String.valueOf(latitude), String.valueOf(longitude), title);
     }
 
     private void clearMap() {
