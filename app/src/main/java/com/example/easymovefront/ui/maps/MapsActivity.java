@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.example.easymovefront.R;
 import com.example.easymovefront.data.model.LoggedUser;
 import com.example.easymovefront.network.CreateMarkerTask;
+import com.example.easymovefront.network.GetMarkerTask;
 import com.example.easymovefront.ui.dialog.RouteDialogFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -47,12 +48,16 @@ import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.TravelMode;
 
 import org.joda.time.DateTime;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener, RouteDialogFragment.OnFragmentInteractionListener, ObstacleDialogFragment.OnFragmentInteractionListener {
@@ -91,6 +96,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         initializeLocationManager();
     }
+
+
 
     private void setNavigationDrawer() {
         dLayout = (DrawerLayout) findViewById(R.id.drawer_layout); // initiate a DrawerLayout
@@ -181,9 +188,51 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                     });
         }
+        populateMap();
         CameraUpdate location = CameraUpdateFactory.newLatLngZoom(
                 new LatLng(41.385063, 2.173404), 10);
         mMap.animateCamera(location);
+    }
+
+    private void populateMap() {
+        GetMarkerTask myTask = new GetMarkerTask(getApplicationContext());
+        myTask.execute();
+        String result = "";
+        try {
+              result = myTask.get();
+            JSONArray Jarray = new JSONArray(result);
+            for(int i=0; i<Jarray.length(); i++) {
+                JSONObject dataObj = Jarray.getJSONObject(i);
+                Double lat = dataObj.getDouble("latitud");
+                Double lon = dataObj.getDouble("longitud");
+                String title = dataObj.getString("nom");
+                String desc = dataObj.getString("descripcio");
+                //Similarly you can extract for other fields.
+                LatLng loc = new LatLng(lat, lon);
+
+
+                mMap.addMarker(new MarkerOptions()
+                        .position(loc)
+                        .title(title)
+                        .snippet(desc)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+            }
+            CharSequence text;
+            int duration;
+            Toast toast;
+            text = result;
+            duration = Toast.LENGTH_LONG;
+
+            toast = Toast.makeText(this, text, duration);
+            toast.show();
+
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+                e.printStackTrace();
+            }
     }
 
     @Override

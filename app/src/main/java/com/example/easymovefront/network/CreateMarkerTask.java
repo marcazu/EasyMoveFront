@@ -69,7 +69,6 @@ public class CreateMarkerTask extends AsyncTask<String, Void, Integer>
                     // Get back the response and convert it to a Book object
                     returnCode = 1;
                     mResponse = response.body().string();
-                    LoggedUser.getInstance().setId(mResponse);
 
                 }
                 else {
