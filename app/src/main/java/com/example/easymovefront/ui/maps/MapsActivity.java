@@ -399,16 +399,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         markers.clear();
     }
 
-    private void createRoute(String og2, String dest2) {
-        Address test = null;
-        Address test2 = null;
+    private void createRoute(String inputSource, String inputDest) {
+        Address addOg = null;
+        Address addDest = null;
         try {
             Geocoder geo = new Geocoder(this);
-            List<Address> adressList = new LinkedList<>();
+            List<Address> addressList = new LinkedList<>();
             try {
-                if (!og2.isEmpty()) {
-                    adressList = geo.getFromLocationName(og2, 1);
-                    test = adressList.get(0);
+                if (!inputSource.isEmpty()) {
+                    addressList = geo.getFromLocationName(inputSource, 1);
+                    addOg = addressList.get(0);
                 }
             }
             catch (IndexOutOfBoundsException e) {
@@ -423,8 +423,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
             List<Address> adressList2 = new LinkedList<>();
             try {
-                adressList2 = geo.getFromLocationName(dest2, 1);
-                test2 = adressList2.get(0);
+                adressList2 = geo.getFromLocationName(inputDest, 1);
+                addDest = adressList2.get(0);
             }
             catch (IndexOutOfBoundsException e) {
                 CharSequence text;
@@ -436,13 +436,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 toast = Toast.makeText(this, text, duration);
                 toast.show();
             }
-            if ((test != null && test2 != null) || (og2.isEmpty() && test2 != null &&
+            if ((addOg != null && addDest != null) || (inputSource.isEmpty() && addDest != null &&
                     ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) == PackageManager.PERMISSION_GRANTED)) {
                 String og;
-                if (!og2.isEmpty())
-                og = String.format(Locale.ENGLISH, "%.8f,%.8f", test.getLatitude(), test.getLongitude());
+                if (!inputSource.isEmpty())
+                og = String.format(Locale.ENGLISH, "%.8f,%.8f", addOg.getLatitude(), addOg.getLongitude());
                 else og = String.format(Locale.ENGLISH, "%.8f,%.8f", mUserLocation.latitude, mUserLocation.longitude);
-                String dest = String.format(Locale.ENGLISH, "%.8f,%.8f", test2.getLatitude(), test2.getLongitude());
+                String dest = String.format(Locale.ENGLISH, "%.8f,%.8f", addDest.getLatitude(), addDest.getLongitude());
 
                 DateTime now = new DateTime();
                 DirectionsResult result;
