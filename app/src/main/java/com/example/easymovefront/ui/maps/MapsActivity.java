@@ -24,7 +24,9 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.easymovefront.R;
+import com.example.easymovefront.data.model.LoggedUser;
 import com.example.easymovefront.network.CreateMarkerTask;
+import com.example.easymovefront.ui.dialog.RouteDialogFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
@@ -32,6 +34,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -55,7 +58,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener, RouteDialogFragment.OnFragmentInteractionListener {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener, RouteDialogFragment.OnFragmentInteractionListener, ObstacleDialogFragment.OnFragmentInteractionListener {
 
     private GoogleMap mMap;
     private LocationManager mLocationManager;
@@ -127,8 +130,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                         toast = Toast.makeText(getApplicationContext(), text, duration);
                         toast.show();
-                        CreateMarkerTask myTask = new CreateMarkerTask(getApplicationContext());
-                        myTask.execute("test marker2", "urlfoto2", "2", "22", "33", "test nom2");
                         return true;
                     case R.id.settings:
                         text = "SETTINGS PLACEHOLDER";
@@ -161,6 +162,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             case R.id.route:
                 DialogFragment newFragment = new RouteDialogFragment(this);
                 newFragment.show(getSupportFragmentManager(), "kek");
+                return true;
+            case R.id.obstacle:
+                DialogFragment newFragment2 = new ObstacleDialogFragment(this);
+                newFragment2.show(getSupportFragmentManager(), "kok");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -291,6 +296,55 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    private void createObstacle(String pos, String desc, String foto, String title) {
+        Address posicio = null;
+        try {
+            Geocoder geo = new Geocoder(this);
+
+            try {
+                if (!pos.isEmpty()) {
+                    List<Address> addresses = geo.getFromLocationName(pos, 1);
+                    posicio = addresses.get(0);
+                }
+            } catch (IOException e) {
+                //e.printStackTrace();
+                CharSequence text;
+                int duration;
+                Toast toast;
+                text = getString(R.string.address_source_notfound);
+                duration = Toast.LENGTH_LONG;
+
+                toast = Toast.makeText(this, text, duration);
+                toast.show();
+            }
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+
+                LatLng loc = null;
+                if (pos.isEmpty())
+                    loc = new LatLng(mUserLocation.latitude, mUserLocation.longitude);
+                else {
+                    //IMPLEMENTAR AMB DIRECCIO
+                }
+                mMap.addMarker(new MarkerOptions()
+                        .position(loc)
+                        .title(title)
+                        .snippet(desc)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+
+                addMarkerToBack(desc, "", loc.latitude, loc.longitude, title);
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addMarkerToBack(String desc, String urlFoto, double latitude, double longitude, String title){
+        CreateMarkerTask myTask = new CreateMarkerTask(getApplicationContext());
+        myTask.execute(desc, urlFoto, LoggedUser.getInstance().getId(), String.valueOf(latitude), String.valueOf(longitude), title);
+    }
+
     private void clearMap() {
         for(Polyline line : polylines)
         {
@@ -371,6 +425,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+
+
     private GeoApiContext getGeoContext() {
         GeoApiContext geoApiContext = new GeoApiContext();
         return geoApiContext.setQueryRateLimit(3)
@@ -398,5 +454,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onOkPressed(String src, String dest) {
         clearMap();
         createRoute(src, dest);
+    }
+
+    @Override
+    public void onOkPressedObstacle(String pos, String desc, String foto, String title) {
+        createObstacle(pos, desc, foto, title);
     }
 }
