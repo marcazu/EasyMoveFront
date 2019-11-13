@@ -7,7 +7,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.DialogFragment;
-import androidx.navigation.ui.AppBarConfiguration;
 
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -26,7 +25,6 @@ import android.widget.Toast;
 import com.example.easymovefront.R;
 import com.example.easymovefront.data.model.LoggedUser;
 import com.example.easymovefront.network.CreateMarkerTask;
-import com.example.easymovefront.ui.dialog.RouteDialogFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
