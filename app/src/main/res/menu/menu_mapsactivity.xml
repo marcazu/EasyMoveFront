@@ -9,7 +9,7 @@
         EasyMoveFront:showAsAction="ifRoom"/>
     <item
         android:id="@+id/obstacle"
-        android:icon="@drawable/logo"
+        android:icon="@drawable/obstacle"
         android:title="@string/Obstacle"
         EasyMoveFront:showAsAction="ifRoom"/>
 </menu>
