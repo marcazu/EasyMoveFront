@@ -7,6 +7,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -216,7 +217,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 new LatLng(41.385063, 2.173404), 10);
         mMap.animateCamera(location);
         mMap.setOnMarkerClickListener(Marker -> {
-            DialogFragment newFragment = new RouteDialogFragment(this);
+            DialogFragment newFragment = new DisplayObstacleFragment(this, Marker);
             newFragment.show(getSupportFragmentManager(), "kek");
             return true;
         });
@@ -497,7 +498,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         polylines.add(mMap.addPolyline(new PolylineOptions().addAll(decodedPath)));
     }
 
-    public Bitmap StringToBitMap(String image){
+    public static Bitmap StringToBitMap(String image){
         try{
             byte [] encodeByte=Base64.decode(image, Base64.DEFAULT);
             Bitmap bitmap= BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
@@ -508,7 +509,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    public String BitMapToString(Bitmap bitmap) {
+    public static String BitMapToString(Bitmap bitmap) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
         byte[] arr = baos.toByteArray();
