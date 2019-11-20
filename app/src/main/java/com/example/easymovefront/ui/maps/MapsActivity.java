@@ -9,6 +9,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.DialogFragment;
 
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
@@ -16,6 +18,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -53,6 +56,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -211,6 +215,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         CameraUpdate location = CameraUpdateFactory.newLatLngZoom(
                 new LatLng(41.385063, 2.173404), 10);
         mMap.animateCamera(location);
+        mMap.setOnMarkerClickListener(Marker -> {
+            DialogFragment newFragment = new RouteDialogFragment(this);
+            newFragment.show(getSupportFragmentManager(), "kek");
+            return true;
+        });
     }
 
     private void populateMap() {
@@ -334,7 +343,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    private void createObstacle(String pos, String desc, String foto, String title) {
+    private void createObstacle(String pos, String desc, Bitmap foto, String title) {
         Address posicio = null;
         try {
             Geocoder geo = new Geocoder(this);
@@ -370,7 +379,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         .snippet(desc)
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
 
-                addMarkerToBack(desc, "", loc.latitude, loc.longitude, title);
+                addMarkerToBack(desc, BitMapToString(foto), loc.latitude, loc.longitude, title);
 
             }
         } catch (Exception e) {
@@ -488,14 +497,34 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         polylines.add(mMap.addPolyline(new PolylineOptions().addAll(decodedPath)));
     }
 
-    @Override
+    public Bitmap StringToBitMap(String image){
+        try{
+            byte [] encodeByte=Base64.decode(image, Base64.DEFAULT);
+            Bitmap bitmap= BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            return bitmap;
+        }catch(Exception e){
+            e.getMessage();
+            return null;
+        }
+    }
+
+    public String BitMapToString(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] arr = baos.toByteArray();
+        String result = Base64.encodeToString(arr, Base64.DEFAULT);
+        return result;
+    }
+
+
+        @Override
     public void onOkPressed(String src, String dest) {
         clearMap();
         createRoute(src, dest);
     }
 
     @Override
-    public void onOkPressedObstacle(String pos, String desc, String foto, String title) {
+    public void onOkPressedObstacle(String pos, String desc, Bitmap foto, String title) {
         createObstacle(pos, desc, foto, title);
     }
 }

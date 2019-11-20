@@ -1,21 +1,32 @@
 package com.example.easymovefront.ui.maps;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
+import android.provider.MediaStore;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.easymovefront.R;
+
+import static android.app.Activity.RESULT_OK;
 
 
 public class ObstacleDialogFragment extends DialogFragment {
@@ -24,10 +35,14 @@ public class ObstacleDialogFragment extends DialogFragment {
     private EditText mEditText;
     private EditText mEditText2;
     private Context mContext;
+    private ImageView img;
+    private Button camerabutton;
+    private Boolean isCameraEnabled = true;
+    private Bitmap mPicture;
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onOkPressedObstacle(String pos, String desc, String foto, String title);
+        void onOkPressedObstacle(String pos, String desc, Bitmap foto, String title);
     }
 
     public ObstacleDialogFragment(Context context) {
@@ -40,6 +55,22 @@ public class ObstacleDialogFragment extends DialogFragment {
         // Get the layout inflater
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         final View editTextView = inflater.inflate(R.layout.fragment_obstacle_dialog, null);
+        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            isCameraEnabled = false;
+            ActivityCompat.requestPermissions(this.getActivity(), new String[] { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);
+        }
+        camerabutton = editTextView.findViewById(R.id.button_callcamera);
+        img = editTextView.findViewById(R.id.imageviewPhoto);
+        camerabutton.setOnClickListener(new View.OnClickListener() {
+                                            public void onClick(View v) {
+                                                if (isCameraEnabled) {
+                                                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                                    if (takePictureIntent.resolveActivity(mContext.getPackageManager()) != null) {
+                                                        startActivityForResult(takePictureIntent, 1);
+                                                    }
+                                                }
+                                            }
+                                        });
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         builder.setView(editTextView)
@@ -55,7 +86,7 @@ public class ObstacleDialogFragment extends DialogFragment {
                                 String description = desc.getText().toString();
                                 String photography = null;
                                 String title = tit.getText().toString();
-                                mListener.onOkPressedObstacle(locat, description, photography, title);
+                                mListener.onOkPressedObstacle(locat, description, mPicture, title);
                             }
                 })
                 .setNegativeButton(R.string.app_name, new DialogInterface.OnClickListener() {
@@ -63,6 +94,25 @@ public class ObstacleDialogFragment extends DialogFragment {
                     }
                 });
         return builder.create();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            mPicture = (Bitmap) extras.get("data");
+            img.setImageBitmap(mPicture);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == 0) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                    && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                isCameraEnabled = true;
+            }
+        }
     }
 
 
