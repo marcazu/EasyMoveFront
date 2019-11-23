@@ -26,7 +26,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class CreateMarkerTask extends AsyncTask<String, Void, Integer>
+public class CreateMarkerTask extends AsyncTask<String, Void, JSONObject>
 {
     private Context mContext;
 
@@ -41,10 +41,11 @@ public class CreateMarkerTask extends AsyncTask<String, Void, Integer>
     }
 
     @Override
-    protected Integer doInBackground(String... strings)
+    protected JSONObject doInBackground(String... strings)
     {
+        JSONObject json = null;
         try {
-            JSONObject json = new JSONObject();
+            json = new JSONObject();
             json.put("descripcio", strings[0]);
             json.put("foto", strings[1]);
             json.put("idUsuariCreador", Integer.parseInt(strings[2]));
@@ -69,6 +70,7 @@ public class CreateMarkerTask extends AsyncTask<String, Void, Integer>
                     // Get back the response and convert it to a Book object
                     returnCode = 1;
                     mResponse = response.body().string();
+                    json.put("id", Integer.parseInt(mResponse));
 
                 }
                 else {
@@ -83,15 +85,15 @@ public class CreateMarkerTask extends AsyncTask<String, Void, Integer>
             returnCode = -1;
         }
 
-        return returnCode;
+        return json;
     }
 
     @Override
-    protected void onPostExecute(Integer result) {
-        CharSequence text = result.toString();
+    protected void onPostExecute(JSONObject result) {
+        /*CharSequence text = result.toString();
         int duration = Toast.LENGTH_LONG;
 
         Toast toast = Toast.makeText(mContext, text, duration);
-        toast.show();
+        toast.show();*/
     }
 }

@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import com.example.easymovefront.R;
 import com.example.easymovefront.data.model.LoggedUser;
+import com.example.easymovefront.data.model.ObstacleMap;
 import com.example.easymovefront.network.CreateMarkerTask;
 import com.example.easymovefront.network.GetMarkerTask;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -57,8 +58,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -232,6 +235,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             JSONArray Jarray = new JSONArray(result);
             for(int i=0; i<Jarray.length(); i++) {
                 JSONObject dataObj = Jarray.getJSONObject(i);
+                Integer id = dataObj.getInt("id");
                 Double lat = dataObj.getDouble("latitud");
                 Double lon = dataObj.getDouble("longitud");
                 String title = dataObj.getString("nom");
@@ -240,11 +244,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 LatLng loc = new LatLng(lat, lon);
 
 
-                mMap.addMarker(new MarkerOptions()
+                Marker mark = mMap.addMarker(new MarkerOptions()
                         .position(loc)
                         .title(title)
                         .snippet(desc)
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                ObstacleMap.getInstance().addMarker(mark, dataObj);
             }
         } catch (ExecutionException e) {
             e.printStackTrace();
@@ -374,13 +379,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 else {
                     //IMPLEMENTAR AMB DIRECCIO
                 }
-                mMap.addMarker(new MarkerOptions()
+                Marker mark = mMap.addMarker(new MarkerOptions()
                         .position(loc)
                         .title(title)
                         .snippet(desc)
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
-
-                addMarkerToBack(desc, BitMapToString(foto), loc.latitude, loc.longitude, title);
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                foto.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                Bitmap decoded = BitmapFactory.decodeStream(new ByteArrayInputStream(out.toByteArray()));
+                addMarkerToBack(desc, "", loc.latitude, loc.longitude, title, mark);
 
             }
         } catch (Exception e) {
@@ -388,9 +395,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    private void addMarkerToBack(String desc, String urlFoto, double latitude, double longitude, String title){
+    private void addMarkerToBack(String desc, String urlFoto, double latitude, double longitude, String title, Marker mark){
         CreateMarkerTask myTask = new CreateMarkerTask(getApplicationContext());
         myTask.execute(desc, urlFoto, LoggedUser.getInstance().getId(), String.valueOf(latitude), String.valueOf(longitude), title);
+        try {
+            JSONObject obj = myTask.get();
+            ObstacleMap.getInstance().addMarker(mark, obj);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private void clearMap() {
