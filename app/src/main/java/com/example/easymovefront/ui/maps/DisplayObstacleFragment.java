@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -17,25 +18,35 @@ import com.example.easymovefront.R;
 import com.example.easymovefront.data.model.LoggedUser;
 import com.example.easymovefront.data.model.ObstacleMap;
 import com.example.easymovefront.network.CreateMarkerTask;
+import com.example.easymovefront.network.GetMarkerTask;
+import com.example.easymovefront.network.GetSingleMarkerTask;
 import com.example.easymovefront.network.LikeObstacleTask;
 import com.google.android.gms.maps.model.Marker;
 
 import com.like.LikeButton;
 import com.like.OnLikeListener;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.concurrent.ExecutionException;
+
 public class DisplayObstacleFragment extends DialogFragment {
 
+    private JSONObject json;
     private String mId;
+    private String mIdCreador;
     
     private Context mContext;
     private Marker mMarker;
     private LikeButton mLike;
     private LikeButton mDislike;
     private LikeButton mResolved;
-    private LikeButton mMisplaced;
+
+    private TextView mLikenumber;
+    private TextView mDislikenumber;
+
     private ProgressBar mapsLoading;
 
     public DisplayObstacleFragment(Context context, Marker marker, ProgressBar loading) {
@@ -47,6 +58,7 @@ public class DisplayObstacleFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         obtainMarkerID();
+        getUpdatedMarker();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
@@ -54,12 +66,19 @@ public class DisplayObstacleFragment extends DialogFragment {
         ImageView pic = editTextView.findViewById(R.id.obstacleView);
         TextView title = editTextView.findViewById(R.id.titleObstacle);
         TextView desc = editTextView.findViewById(R.id.descriptionObstacle);
+        mLikenumber = editTextView.findViewById(R.id.likenumber);
+        mDislikenumber = editTextView.findViewById(R.id.dislikenumber);
         mLike = editTextView.findViewById(R.id.likeButton);
         mDislike = editTextView.findViewById(R.id.dislikeButton);
+        updateLikeStatus();
         mLike.setOnLikeListener(new OnLikeListener() {
             @Override
             public void liked(LikeButton likeButton) {
-                mDislike.setLiked(false);
+                if (mDislike.isLiked()) {
+                    mDislike.setLiked(false);
+                    updateLikeNumber("treuredislike");
+                }
+                updateLikeNumber("like");
                 LikeObstacleTask myTask = new LikeObstacleTask(mContext);
                 myTask.execute(mId, "like", LoggedUser.getInstance().getId());
 
@@ -67,6 +86,7 @@ public class DisplayObstacleFragment extends DialogFragment {
 
             @Override
             public void unLiked(LikeButton likeButton) {
+                updateLikeNumber("treurelike");
                 LikeObstacleTask myTask = new LikeObstacleTask(mContext);
                 myTask.execute(mId, "treurelike", LoggedUser.getInstance().getId());
             }
@@ -74,13 +94,18 @@ public class DisplayObstacleFragment extends DialogFragment {
         mDislike.setOnLikeListener(new OnLikeListener() {
             @Override
             public void liked(LikeButton likeButton) {
-                mLike.setLiked(false);
+                if (mLike.isLiked()) {
+                    mLike.setLiked(false);
+                    updateLikeNumber("treurelike");
+                }
+                updateLikeNumber("dislike");
                 LikeObstacleTask myTask = new LikeObstacleTask(mContext);
                 myTask.execute(mId, "dislike", LoggedUser.getInstance().getId());
             }
 
             @Override
             public void unLiked(LikeButton likeButton) {
+                updateLikeNumber("treuredislike");
                 LikeObstacleTask myTask = new LikeObstacleTask(mContext);
                 myTask.execute(mId, "treuredislike", LoggedUser.getInstance().getId());
             }
@@ -96,10 +121,75 @@ public class DisplayObstacleFragment extends DialogFragment {
         return builder.create();
     }
 
+    private void updateLikeNumber(String type) {
+        Integer number;
+        if (type == "like") {
+            number = Integer.parseInt(mLikenumber.getText().toString());
+            number++;
+            mLikenumber.setText(String.valueOf(number));
+        }
+        else if (type == "treurelike") {
+            number = Integer.parseInt(mLikenumber.getText().toString());
+            number--;
+            mLikenumber.setText(String.valueOf(number));
+        }
+        else if (type == "dislike") {
+            number = Integer.parseInt(mDislikenumber.getText().toString());
+            number++;
+            mDislikenumber.setText(String.valueOf(number));
+        }
+        else if (type == "treuredislike") {
+            number = Integer.parseInt(mDislikenumber.getText().toString());
+            number--;
+            mDislikenumber.setText(String.valueOf(number));
+        }
+    }
+
+    private void getUpdatedMarker() {
+        GetSingleMarkerTask myTask = new GetSingleMarkerTask(mContext);
+        myTask.execute(mId);
+        try {
+            String result = myTask.get();
+            json = new JSONObject(result);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updateLikeStatus() {
+        try {
+            JSONArray jarray = json.getJSONArray("usuarisLike");
+            mLikenumber.setText(String.valueOf(jarray.length()));
+            for(int i=0; i<jarray.length(); i++) {
+                if (jarray.getInt(i) == Integer.parseInt(mIdCreador)) {
+                    mLike.setLiked(true);
+                    break;
+                }
+            }
+            jarray = json.getJSONArray("usuarisDisLike");
+            mDislikenumber.setText(String.valueOf(jarray.length()));
+            if (!mLike.isLiked()) {
+                for (int i = 0; i < jarray.length(); i++) {
+                    if (jarray.getInt(i) == Integer.parseInt(mIdCreador)) {
+                        mDislike.setLiked(true);
+                        break;
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void obtainMarkerID() {
-        JSONObject json = ObstacleMap.getInstance().getMap().get(mMarker);
+        json = ObstacleMap.getInstance().getMap().get(mMarker);
         try {
             mId = json.getString("id");
+            mIdCreador = json.getString("idUsuariCreador");
         } catch (JSONException e) {
             e.printStackTrace();
         }

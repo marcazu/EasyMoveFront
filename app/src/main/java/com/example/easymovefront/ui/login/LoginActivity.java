@@ -64,6 +64,15 @@ public class LoginActivity extends AppCompatActivity {
             pref = PreferenceManager.getDefaultSharedPreferences(this);
             LoggedUser.getInstance().setId(pref.getString("id", "n/a"));
             updateUI();
+            try {
+                updateBackend(mUserAccount);
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (TimeoutException e) {
+                e.printStackTrace();
+            }
             launchMaps();
         }
         findViewById(R.id.sign_in_button).setOnClickListener(new View.OnClickListener() {
