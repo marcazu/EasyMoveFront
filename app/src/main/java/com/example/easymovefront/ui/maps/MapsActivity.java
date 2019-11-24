@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.DialogFragment;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -31,6 +32,7 @@ import com.example.easymovefront.data.model.LoggedUser;
 import com.example.easymovefront.data.model.ObstacleMap;
 import com.example.easymovefront.network.CreateMarkerTask;
 import com.example.easymovefront.network.GetMarkerTask;
+import com.example.easymovefront.ui.settings.SettingsActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
@@ -105,6 +107,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         setNavigationDrawer();
 
+
         initializeLocationManager();
     }
 
@@ -130,6 +133,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         dLayout.addDrawerListener(mDrawerToggle);
         NavigationView navView = (NavigationView) findViewById(R.id.navigation); // initiate a Navigation View
         // implement setNavigationItemSelectedListener event on NavigationView
+        navView.getMenu().getItem(0).setChecked(true);
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -148,6 +152,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     case R.id.settings:
                         text = "SETTINGS PLACEHOLDER";
                         duration = Toast.LENGTH_LONG;
+                        Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                        startActivity(intent);
 
                         toast = Toast.makeText(getApplicationContext(), text, duration);
                         toast.show();
@@ -386,9 +392,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         .title(title)
                         .snippet(desc)
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                foto.compress(Bitmap.CompressFormat.JPEG, 100, out);
-                Bitmap decoded = BitmapFactory.decodeStream(new ByteArrayInputStream(out.toByteArray()));
                 addMarkerToBack(desc, "", loc.latitude, loc.longitude, title, mark);
 
             }

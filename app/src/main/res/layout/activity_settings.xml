@@ -8,8 +8,8 @@
     tools:context=".ui.maps.MapsActivity">
 
     <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -17,15 +17,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:background="@color/colorBlue"/>
-
-
-        <fragment
-            android:id="@+id/map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="?attr/actionBarSize"
-            tools:context=".ui.maps.MapsActivity" />
 
         <LinearLayout
             android:id="@+id/load"
@@ -53,7 +44,7 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/drawer_header"
-        app:menu="@menu/menu_drawerlayout" />
+        app:menu="@menu/menu_drawerlayout"/>
 
 
 
@@ -61,4 +52,3 @@
 
 
 </androidx.drawerlayout.widget.DrawerLayout>
-
