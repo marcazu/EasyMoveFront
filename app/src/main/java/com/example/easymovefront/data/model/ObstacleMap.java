@@ -28,4 +28,8 @@ public class ObstacleMap {
     public void addMarker(Marker m, JSONObject obj) {
         mObstacleMap.put(m, obj);
     }
+
+    public Map<Marker, JSONObject> getMap() {
+        return mObstacleMap;
+    }
 }

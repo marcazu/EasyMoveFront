@@ -89,7 +89,7 @@ public class ObstacleDialogFragment extends DialogFragment {
                                 mListener.onOkPressedObstacle(locat, description, mPicture, title);
                             }
                 })
-                .setNegativeButton(R.string.app_name, new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.cancelButton, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                     }
                 });
@@ -102,6 +102,8 @@ public class ObstacleDialogFragment extends DialogFragment {
             Bundle extras = data.getExtras();
             mPicture = (Bitmap) extras.get("data");
             img.setImageBitmap(mPicture);
+            img.setVisibility(View.VISIBLE);
+            camerabutton.setText("CHANGE PHOTO");
         }
     }
 

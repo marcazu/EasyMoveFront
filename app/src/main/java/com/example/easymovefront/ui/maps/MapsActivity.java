@@ -7,7 +7,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -24,6 +23,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.easymovefront.R;
@@ -61,7 +61,6 @@ import org.json.JSONObject;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -79,6 +78,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private FusedLocationProviderClient fusedLocationClient;
     private ActionBarDrawerToggle mDrawerToggle;
     private Toolbar mToolbar;
+    private ProgressBar mloadingBar;
     DrawerLayout dLayout;
 
     List<Polyline> polylines = new ArrayList<Polyline>();
@@ -96,6 +96,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //getting the toolbar
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mloadingBar = findViewById(R.id.loadingMaps);
 
         //setting the title
         mToolbar.setTitle("");
@@ -220,7 +221,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 new LatLng(41.385063, 2.173404), 10);
         mMap.animateCamera(location);
         mMap.setOnMarkerClickListener(Marker -> {
-            DialogFragment newFragment = new DisplayObstacleFragment(this, Marker);
+            mloadingBar.setVisibility(View.VISIBLE);
+            DialogFragment newFragment = new DisplayObstacleFragment(this, Marker, mloadingBar);
             newFragment.show(getSupportFragmentManager(), "kek");
             return true;
         });
@@ -533,7 +535,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
-        @Override
+    @Override
     public void onOkPressed(String src, String dest) {
         clearMap();
         createRoute(src, dest);
