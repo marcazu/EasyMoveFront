@@ -36,6 +36,8 @@
                 android:id="@+id/likenumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@id/likeButton"
+
                 android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <com.like.LikeButton
@@ -88,7 +90,6 @@
                 app:unlike_drawable="@drawable/edit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
                 />
 
     </LinearLayout>
