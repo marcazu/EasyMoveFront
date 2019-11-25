@@ -83,6 +83,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     List<Polyline> polylines = new ArrayList<Polyline>();
     List<Marker> markers = new ArrayList<Marker>();
+    List<String> steps = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -475,7 +476,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         .mode(TravelMode.WALKING).origin(og)
                         .destination(dest).departureTime(now)
                         .await();
-
+                formStepbyStepRoute(result);
                 addMarkersToMap(result, mMap);
                 addPolyline(result, mMap);
             }
@@ -488,6 +489,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    private void formStepbyStepRoute(DirectionsResult result) {
+        for (int i = 0; i < result.routes.length; ++i) {
+            for (int j = 0; j < result.routes[i].legs.length; ++j) {
+                for (int k = 0; k < result.routes[i].legs[j].steps.length; ++j) {
+                    steps.add(result.routes[i].legs[j].steps[k].htmlInstructions);
+                }
+            }
+        }
+
+
+    }
 
 
     private GeoApiContext getGeoContext() {
