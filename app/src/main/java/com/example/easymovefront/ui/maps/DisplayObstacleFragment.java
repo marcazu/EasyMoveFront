@@ -3,6 +3,7 @@ package com.example.easymovefront.ui.maps;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -165,7 +166,7 @@ public class DisplayObstacleFragment extends DialogFragment {
             JSONArray jarray = json.getJSONArray("usuarisLike");
             mLikenumber.setText(String.valueOf(jarray.length()));
             for(int i=0; i<jarray.length(); i++) {
-                if (jarray.getInt(i) == Integer.parseInt(mIdCreador)) {
+                if (jarray.getInt(i) == Integer.parseInt(LoggedUser.getInstance().getId())) {
                     mLike.setLiked(true);
                     break;
                 }
@@ -174,7 +175,7 @@ public class DisplayObstacleFragment extends DialogFragment {
             mDislikenumber.setText(String.valueOf(jarray.length()));
             if (!mLike.isLiked()) {
                 for (int i = 0; i < jarray.length(); i++) {
-                    if (jarray.getInt(i) == Integer.parseInt(mIdCreador)) {
+                    if (jarray.getInt(i) == Integer.parseInt(LoggedUser.getInstance().getId())) {
                         mDislike.setLiked(true);
                         break;
                     }
