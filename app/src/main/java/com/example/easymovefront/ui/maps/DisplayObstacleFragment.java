@@ -78,6 +78,8 @@ public class DisplayObstacleFragment extends DialogFragment {
                 if (mDislike.isLiked()) {
                     mDislike.setLiked(false);
                     updateLikeNumber("treuredislike");
+                    LikeObstacleTask myTask = new LikeObstacleTask(mContext);
+                    myTask.execute(mId, "treuredislike", LoggedUser.getInstance().getId());
                 }
                 updateLikeNumber("like");
                 LikeObstacleTask myTask = new LikeObstacleTask(mContext);
@@ -98,6 +100,8 @@ public class DisplayObstacleFragment extends DialogFragment {
                 if (mLike.isLiked()) {
                     mLike.setLiked(false);
                     updateLikeNumber("treurelike");
+                    LikeObstacleTask myTask = new LikeObstacleTask(mContext);
+                    myTask.execute(mId, "treurelike", LoggedUser.getInstance().getId());
                 }
                 updateLikeNumber("dislike");
                 LikeObstacleTask myTask = new LikeObstacleTask(mContext);
