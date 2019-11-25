@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toTopOf="@id/likeButton"
 
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                 />
 
             <com.like.LikeButton
                 app:icon_type="thumb"
