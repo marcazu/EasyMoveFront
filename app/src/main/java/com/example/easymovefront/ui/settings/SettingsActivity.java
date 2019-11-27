@@ -7,12 +7,13 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceManager;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.RingtonePreference;
 
 import com.example.easymovefront.R;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends AppCompatActivity implements SettingsFragment.OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +27,11 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        
+    }
+    /*
     private static void bindSummaryValue(Preference preference) {
         preference.setOnPreferenceChangeListener(listener);
         listener.onPreferenceChange(preference,
@@ -48,5 +54,5 @@ public class SettingsActivity extends AppCompatActivity {
             }
             return false;
         }
-    };
+    };*/
 }
