@@ -157,13 +157,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         finish();
                         return true;
                     case R.id.settings:
-                        text = "SETTINGS PLACEHOLDER";
-                        duration = Toast.LENGTH_LONG;
                         Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
                         startActivity(intent);
-
-                        toast = Toast.makeText(getApplicationContext(), text, duration);
-                        toast.show();
                         return true;
                     default:
                         return false;
