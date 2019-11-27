@@ -7,8 +7,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.DialogFragment;
+import androidx.preference.PreferenceManager;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -81,6 +83,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ActionBarDrawerToggle mDrawerToggle;
     private Toolbar mToolbar;
     private ProgressBar mloadingBar;
+    private SharedPreferences mSharedPreference;
     DrawerLayout dLayout;
 
     List<Polyline> polylines = new ArrayList<Polyline>();
@@ -109,6 +112,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         initializeLocationManager();
+
+        mSharedPreference = PreferenceManager
+                        .getDefaultSharedPreferences(this);
     }
 
 
