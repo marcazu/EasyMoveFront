@@ -7,54 +7,45 @@
     android:layout_height="match_parent"
     tools:context=".ui.profile.ProfileActivity">
 
+
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbarProfile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:background="@color/colorBlue"/>
+            android:layout_marginStart="-13dp"
+            android:background="@color/colorBlue" />
 
-        <LinearLayout
+
+        <ImageView
+            android:id="@+id/pictureProfile"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:layout_below="@id/toolbarProfile">
-
-            <ImageView
-                android:id="@+id/pictureProfile"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scaleType="centerCrop"/>
-
-            <TextView
-                android:id="@+id/nameProfile"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/loadProfile"
+            android:layout_height="wrap_content"
             android:layout_below="@id/toolbarProfile"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/nameProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/pictureProfile"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+
+        <ProgressBar
+            android:id="@+id/loadingProfile"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
 
-            <ProgressBar
-                android:id="@+id/loadingProfile"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:visibility="gone" />
 
-        </LinearLayout>
 
     </RelativeLayout>
-
 
     <com.google.android.material.navigation.NavigationView
     android:id="@+id/navigationProfile"

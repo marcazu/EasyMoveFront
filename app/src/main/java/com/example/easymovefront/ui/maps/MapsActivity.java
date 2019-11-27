@@ -28,6 +28,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.easymovefront.R;
+import com.example.easymovefront.data.model.CurrentBitmap;
 import com.example.easymovefront.data.model.LoggedUser;
 import com.example.easymovefront.data.model.ObstacleMap;
 import com.example.easymovefront.network.CreateMarkerTask;
@@ -360,6 +361,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void createObstacle(String pos, String desc, Bitmap foto, String title) {
         Address posicio = null;
+        CurrentBitmap.getInstance().setBitMap(foto);
         try {
             Geocoder geo = new Geocoder(this);
 
@@ -393,7 +395,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         .title(title)
                         .snippet(desc)
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
-                addMarkerToBack(desc, "", loc.latitude, loc.longitude, title, mark);
+                addMarkerToBack(desc, loc.latitude, loc.longitude, title, mark);
 
             }
         } catch (Exception e) {
@@ -401,9 +403,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    private void addMarkerToBack(String desc, String urlFoto, double latitude, double longitude, String title, Marker mark){
+    private void addMarkerToBack(String desc, double latitude, double longitude, String title, Marker mark){
         CreateMarkerTask myTask = new CreateMarkerTask(getApplicationContext());
-        myTask.execute(desc, urlFoto, LoggedUser.getInstance().getId(), String.valueOf(latitude), String.valueOf(longitude), title);
+        myTask.execute(desc, LoggedUser.getInstance().getId(), String.valueOf(latitude), String.valueOf(longitude), title);
         try {
             JSONObject obj = myTask.get();
             ObstacleMap.getInstance().addMarker(mark, obj);
