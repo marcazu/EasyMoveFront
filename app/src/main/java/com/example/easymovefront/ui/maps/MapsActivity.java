@@ -34,6 +34,7 @@ import com.example.easymovefront.data.model.LoggedUser;
 import com.example.easymovefront.data.model.ObstacleMap;
 import com.example.easymovefront.network.CreateMarkerTask;
 import com.example.easymovefront.network.GetMarkerTask;
+import com.example.easymovefront.ui.profile.ProfileActivity;
 import com.example.easymovefront.ui.settings.SettingsActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -151,9 +152,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     case R.id.profile:
                         text = "PROFILE PLACEHOLDER";
                         duration = Toast.LENGTH_LONG;
-
-                        toast = Toast.makeText(getApplicationContext(), text, duration);
-                        toast.show();
+                        Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+                        startActivity(profileIntent);
+                        finish();
                         return true;
                     case R.id.settings:
                         text = "SETTINGS PLACEHOLDER";
