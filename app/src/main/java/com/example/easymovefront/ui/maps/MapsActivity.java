@@ -1,14 +1,5 @@
 package com.example.easymovefront.ui.maps;
 
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
-
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -61,13 +52,20 @@ import org.json.JSONObject;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.DialogFragment;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener, RouteDialogFragment.OnFragmentInteractionListener, ObstacleDialogFragment.OnFragmentInteractionListener {
 
@@ -181,6 +179,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 DialogFragment newFragment2 = new ObstacleDialogFragment(this);
                 newFragment2.show(getSupportFragmentManager(), "kok");
                 return true;
+            case R.id.nextStep:
+                DialogFragment newFragment3 = new StepDialogFragment(this, steps);
+                newFragment3.show(getSupportFragmentManager(), "kuk");
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -497,8 +500,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             }
         }
-
-
     }
 
 
