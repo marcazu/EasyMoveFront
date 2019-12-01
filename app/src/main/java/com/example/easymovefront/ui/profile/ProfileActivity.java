@@ -1,5 +1,6 @@
 package com.example.easymovefront.ui.profile;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -8,8 +9,10 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -22,6 +25,9 @@ import com.example.easymovefront.network.CreateMarkerTask;
 import com.example.easymovefront.network.GetSingleUserTask;
 import com.example.easymovefront.ui.maps.MapsActivity;
 import com.example.easymovefront.ui.settings.SettingsActivity;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONException;
@@ -42,13 +48,46 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         mToolbar = (Toolbar) findViewById(R.id.toolbarProfile);
-        mloadingBar = findViewById(R.id.loadingProfile);
 
         mToolbar.setTitle("");
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setNavigationDrawer();
         initializeProfileUser();
+        final Button SignOut = findViewById(R.id.signOut_button);
+        findViewById(R.id.signOut_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()) {
+                    case R.id.signOut_button:
+                        signOut(LoggedUser.getInstance().getmGoogleSignInClient());
+                        break;
+                    // ...
+                }
+            }
+        });
+    }
+
+    private void signOut(GoogleSignInClient mGoogleSignInClient) {
+        mGoogleSignInClient.signOut()
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        // ...
+                    }
+                });
+        revokeAccess(mGoogleSignInClient);
+        finish();
+    }
+
+    private void revokeAccess(GoogleSignInClient mGoogleSignInClient) {
+        mGoogleSignInClient.revokeAccess()
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        // ...
+                    }
+                });
     }
 
     private void initializeProfileUser() {
@@ -72,7 +111,7 @@ public class ProfileActivity extends AppCompatActivity {
         try {
             String s = puntstask.get();
             JSONObject json = new JSONObject(s);
-            punts.setText(json.getString("puntuacio"));
+            punts.setText("Score: " + json.getString("puntuacio"));
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -119,6 +158,7 @@ public class ProfileActivity extends AppCompatActivity {
                         loadingDrawer.setVisibility(View.VISIBLE);
                         Intent mapIntent = new Intent(getApplicationContext(), MapsActivity.class);
                         startActivity(mapIntent);
+                        finish();
                         return true;
                     case R.id.profile:
                         return true;

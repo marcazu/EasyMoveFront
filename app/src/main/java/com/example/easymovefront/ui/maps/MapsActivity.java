@@ -154,6 +154,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         loadingDrawer.setVisibility(View.VISIBLE);
                         Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
                         startActivity(profileIntent);
+                        finish();
                         return true;
                     case R.id.settings:
                         text = "SETTINGS PLACEHOLDER";

@@ -57,7 +57,7 @@ public class LoginActivity extends AppCompatActivity {
                 .requestEmail()
                 .requestProfile()
                 .build();
-        final GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        mUserAccount.setmGoogleSignInClient(GoogleSignIn.getClient(this, gso));
 
         mUserAccount.setmUserAccount(GoogleSignIn.getLastSignedInAccount(this));
         if (mUserAccount.getmUserAccount() != null) {
@@ -81,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
                 loadingProgressBar.setVisibility(View.VISIBLE);
                 switch (v.getId()) {
                     case R.id.sign_in_button:
-                        signIn(mGoogleSignInClient);
+                        signIn(mUserAccount.getmGoogleSignInClient());
                         break;
                     // ...
                 }
@@ -94,7 +94,7 @@ public class LoginActivity extends AppCompatActivity {
                 loadingProgressBar.setVisibility(View.VISIBLE);
                 switch (v.getId()) {
                     case R.id.signOut_button:
-                        signOut(mGoogleSignInClient);
+                        signOut(mUserAccount.getmGoogleSignInClient());
                         break;
                     // ...
                 }
