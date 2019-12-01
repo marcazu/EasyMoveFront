@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -83,6 +84,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ActionBarDrawerToggle mDrawerToggle;
     private Toolbar mToolbar;
     private ProgressBar mloadingBar;
+    private ProgressBar loadingDrawer;
+    private ImageView drawerHeader;
     DrawerLayout dLayout;
 
     List<Polyline> polylines = new ArrayList<Polyline>();
@@ -139,17 +142,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
+                loadingDrawer = findViewById(R.id.loadingDrawer);
+                drawerHeader = findViewById(R.id.imageHeader);
                 CharSequence text;
                 int duration;
                 Toast toast;
                 // check selected menu item's id and replace a Fragment Accordingly
                 switch (menuItem.getItemId()) {
                     case R.id.profile:
-                        text = "PROFILE PLACEHOLDER";
-                        duration = Toast.LENGTH_LONG;
+                        drawerHeader.setVisibility(View.GONE);
+                        loadingDrawer.setVisibility(View.VISIBLE);
                         Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
                         startActivity(profileIntent);
-                        finish();
                         return true;
                     case R.id.settings:
                         text = "SETTINGS PLACEHOLDER";

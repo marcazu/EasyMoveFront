@@ -17,16 +17,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="-13dp"
             android:background="@color/colorBlue" />
 
 
         <ImageView
             android:id="@+id/pictureProfile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
             android:layout_below="@id/toolbarProfile"
-            android:scaleType="centerCrop" />
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"/>
 
         <TextView
             android:id="@+id/nameProfile"
@@ -34,6 +34,13 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/pictureProfile"
             android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/pointsUser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/nameProfile"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
 
         <ProgressBar

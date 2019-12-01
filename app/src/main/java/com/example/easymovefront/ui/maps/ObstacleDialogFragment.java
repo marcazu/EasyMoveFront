@@ -7,13 +7,17 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
 
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -25,6 +29,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.easymovefront.R;
+
+import java.io.File;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -39,6 +45,7 @@ public class ObstacleDialogFragment extends DialogFragment {
     private Button camerabutton;
     private Boolean isCameraEnabled = true;
     private Bitmap mPicture;
+    private String mPicturePath;
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
@@ -64,10 +71,17 @@ public class ObstacleDialogFragment extends DialogFragment {
         camerabutton.setOnClickListener(new View.OnClickListener() {
                                             public void onClick(View v) {
                                                 if (isCameraEnabled) {
-                                                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                    if (takePictureIntent.resolveActivity(mContext.getPackageManager()) != null) {
-                                                        startActivityForResult(takePictureIntent, 1);
-                                                    }
+                                                    File dir = Environment.getExternalStoragePublicDirectory(
+                                                            Environment.DIRECTORY_PICTURES);
+                                                    mPicturePath = dir.getAbsolutePath() + "/" + "obstacle.png";
+                                                    File file = new File(mPicturePath);
+                                                    Uri outputfile = FileProvider.getUriForFile(mContext, mContext.getApplicationContext().
+                                                            getPackageName() + ".provider", file);
+                                                    Intent takePictureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                                                    takePictureIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputfile );
+                                                    startActivityForResult(takePictureIntent, 1);
+
                                                 }
                                             }
                                         });
@@ -99,11 +113,13 @@ public class ObstacleDialogFragment extends DialogFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1 && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            mPicture = (Bitmap) extras.get("data");
-            img.setImageBitmap(mPicture);
-            img.setVisibility(View.VISIBLE);
-            camerabutton.setText("CHANGE PHOTO");
+            File imgFile = new  File(mPicturePath);
+            if(imgFile.exists()){
+                mPicture = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                img.setImageBitmap(mPicture);
+                img.setVisibility(View.VISIBLE);
+                camerabutton.setText("CHANGE PHOTO");
+            }
         }
     }
 
