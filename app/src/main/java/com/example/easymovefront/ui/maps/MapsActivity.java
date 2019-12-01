@@ -235,8 +235,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.animateCamera(location);
         mMap.setOnMarkerClickListener(Marker -> {
             mloadingBar.setVisibility(View.VISIBLE);
-            DialogFragment newFragment = new DisplayObstacleFragment(this, Marker, mloadingBar);
-            newFragment.show(getSupportFragmentManager(), "kek");
+            if (ObstacleMap.getInstance().getMap().containsKey(Marker)) {
+                DialogFragment newFragment = new DisplayObstacleFragment(this, Marker, mloadingBar);
+                newFragment.show(getSupportFragmentManager(), "kek");
+            }
+            else {
+                Marker.showInfoWindow();
+                mloadingBar.setVisibility(View.GONE);
+            }
             return true;
         });
     }

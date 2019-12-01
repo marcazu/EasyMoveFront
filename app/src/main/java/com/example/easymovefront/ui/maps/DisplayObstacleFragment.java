@@ -46,6 +46,7 @@ public class DisplayObstacleFragment extends DialogFragment {
     private LikeButton mLike;
     private LikeButton mDislike;
     private LikeButton mResolved;
+    private LikeButton mEdit;
 
     private TextView mLikenumber;
     private TextView mDislikenumber;
@@ -73,6 +74,8 @@ public class DisplayObstacleFragment extends DialogFragment {
         mDislikenumber = editTextView.findViewById(R.id.dislikenumber);
         mLike = editTextView.findViewById(R.id.likeButton);
         mDislike = editTextView.findViewById(R.id.dislikeButton);
+        mEdit = editTextView.findViewById(R.id.editObstacleButton);
+        updateEditButton();
         updateLikeStatus();
         mLike.setOnLikeListener(new OnLikeListener() {
             @Override
@@ -136,6 +139,12 @@ public class DisplayObstacleFragment extends DialogFragment {
         mapsLoading.setVisibility(View.GONE);
 
         return builder.create();
+    }
+
+    private void updateEditButton() {
+        if (!LoggedUser.getInstance().getId().equals(mIdCreador)) {
+            mEdit.setVisibility(View.GONE);
+        }
     }
 
     private void updateLikeNumber(String type) {
