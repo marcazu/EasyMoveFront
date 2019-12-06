@@ -38,8 +38,11 @@
             android:summary="Report technical issues or suggest new features"/>
     </PreferenceCategory>
 
-    <Preference
-        android:key="removeAccount"
-        android:title="Remove Account"
-        android:summary="Remove your account from application" />
+    <PreferenceCategory
+        android:title="ACCOUNT">
+        <Preference
+            android:key="removeAccount"
+            android:title="Remove Account"
+            android:summary="Remove your account from application" />
+    </PreferenceCategory>
 </PreferenceScreen>
