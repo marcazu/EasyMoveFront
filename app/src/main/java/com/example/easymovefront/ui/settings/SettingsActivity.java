@@ -29,14 +29,13 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
 
 
     private SettingsFragment mSettingsFragment;
-    private ProgressBar loadingProgressBar = findViewById(R.id.loading);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(android.R.id.content, new SettingsFragment())
+                .replace(android.R.id.content, new SettingsFragment(this))
                 .commit();
 
 
@@ -46,7 +45,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
             if (savedInstanceState != null) return;
 
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, new SettingsFragment())
+                    .add(R.id.fragment_container, new SettingsFragment(this))
                     .commit();
         }
 

@@ -37,11 +37,13 @@ import com.google.android.gms.tasks.Task;
 public class SettingsFragment extends PreferenceFragmentCompat {
 
     private OnFragmentInteractionListener mListener;
+    private Context mContext;
     public static final String PREF_REMOVE_ACCOUNT = "removeAccount";
     public static final String PREF_ORIGIN_COLOR = "origin_color";
     public static final String PREF_DESTINATION_COLOR = "destination_color";
 
-    public SettingsFragment() {
+    public SettingsFragment(Context context) {
+        mContext = context;
     }
 
 
@@ -108,7 +110,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 .requestEmail()
                 .requestProfile()
                 .build();
-        final GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
+        final GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(mContext.getApplicationContext(), gso);
         signOut(mGoogleSignInClient);
     }
 
