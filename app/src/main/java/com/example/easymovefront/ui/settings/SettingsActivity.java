@@ -58,10 +58,8 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
 
     void updateUI() {
         if (LoggedUser.getInstance().getmUserAccount() != null){
-            final SignInButton googleButton = findViewById(R.id.sign_in_button);
-            googleButton.setVisibility(View.GONE);
-            final Button signOutButton = findViewById(R.id.signOut_button);
-            signOutButton.setVisibility(View.VISIBLE);
+
+
             setResult(Activity.RESULT_OK);
             CharSequence text = "Welcome";
             int duration = Toast.LENGTH_LONG;
@@ -70,8 +68,6 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
             toast.show();
             //finish();
         } else {
-            findViewById(R.id.signOut_button).setVisibility(View.GONE);
-            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
 
             setResult(Activity.RESULT_OK);
             CharSequence text = "Signed Out";

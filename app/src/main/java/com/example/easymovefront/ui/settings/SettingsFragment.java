@@ -127,6 +127,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         LoggedUser.getInstance().setmUserAccount(null);
         //((SettingsActivity)getActivity())loadingProgressBar.setVisibility(View.GONE);
         ((SettingsActivity)getActivity()).updateUI();
+        getActivity().finish();
     }
 
 
