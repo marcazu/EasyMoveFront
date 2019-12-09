@@ -38,7 +38,7 @@ public class DisplayObstacleFragment extends DialogFragment {
     private JSONObject json;
     private String mId;
     private String mIdCreador;
-    
+
     private Context mContext;
     private Marker mMarker;
     private LikeButton mLike;
@@ -128,18 +128,15 @@ public class DisplayObstacleFragment extends DialogFragment {
             number = Integer.parseInt(mLikenumber.getText().toString());
             number++;
             mLikenumber.setText(String.valueOf(number));
-        }
-        else if (type == "treurelike") {
+        } else if (type == "treurelike") {
             number = Integer.parseInt(mLikenumber.getText().toString());
             number--;
             mLikenumber.setText(String.valueOf(number));
-        }
-        else if (type == "dislike") {
+        } else if (type == "dislike") {
             number = Integer.parseInt(mDislikenumber.getText().toString());
             number++;
             mDislikenumber.setText(String.valueOf(number));
-        }
-        else if (type == "treuredislike") {
+        } else if (type == "treuredislike") {
             number = Integer.parseInt(mDislikenumber.getText().toString());
             number--;
             mDislikenumber.setText(String.valueOf(number));
@@ -165,7 +162,7 @@ public class DisplayObstacleFragment extends DialogFragment {
         try {
             JSONArray jarray = json.getJSONArray("usuarisLike");
             mLikenumber.setText(String.valueOf(jarray.length()));
-            for(int i=0; i<jarray.length(); i++) {
+            for (int i = 0; i < jarray.length(); i++) {
                 if (jarray.getInt(i) == Integer.parseInt(LoggedUser.getInstance().getId())) {
                     mLike.setLiked(true);
                     break;
