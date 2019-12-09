@@ -65,6 +65,9 @@ dependencies {
     //Buttons
     implementation 'com.github.jd-alexander:LikeButton:0.2.3'
 
+    //settings
+    implementation 'com.android.support:preference-v7:26.1.0'
+
 
 
 
