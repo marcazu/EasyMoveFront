@@ -37,4 +37,12 @@
             android:title="Send feedback"
             android:summary="Report technical issues or suggest new features"/>
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="ACCOUNT">
+        <Preference
+            android:key="removeAccount"
+            android:title="Remove Account"
+            android:summary="Remove your account from application" />
+    </PreferenceCategory>
 </PreferenceScreen>

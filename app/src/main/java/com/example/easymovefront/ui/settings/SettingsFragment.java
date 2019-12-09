@@ -1,17 +1,30 @@
 package com.example.easymovefront.ui.settings;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.easymovefront.R;
+import com.example.easymovefront.data.model.LoggedUser;
+import com.example.easymovefront.network.DeleteUserTask;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,6 +37,15 @@ import com.example.easymovefront.R;
 public class SettingsFragment extends PreferenceFragmentCompat {
 
     private OnFragmentInteractionListener mListener;
+    public static final String PREF_REMOVE_ACCOUNT = "removeAccount";
+    public static final String PREF_ORIGIN_COLOR = "origin_color";
+    public static final String PREF_DESTINATION_COLOR = "destination_color";
+
+    public SettingsFragment() {
+    }
+
+
+    private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
 
 
     /**
@@ -47,6 +69,112 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        preferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+
+                if (key.equals(PREF_REMOVE_ACCOUNT)) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setCancelable(true);
+                    builder.setTitle("Title");
+                    builder.setMessage("Message");
+                    builder.setPositiveButton("Confirm",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    deleteUser();
+                                }
+                            });
+                    builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+
+                }
+            }
+        };
+
+    }
+
+
+
+    private void deleteUser() {
+        DeleteUserTask myTask = new DeleteUserTask(getContext());
+        myTask.execute(LoggedUser.getInstance().getId());
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .requestProfile()
+                .build();
+        final GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
+        signOut(mGoogleSignInClient);
+    }
+
+
+    private void signOut(GoogleSignInClient mGoogleSignInClient) {
+        mGoogleSignInClient.signOut()
+                .addOnCompleteListener(getActivity(), new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        // ...
+                    }
+                });
+        ((SettingsActivity)getActivity()).revokeAccess(mGoogleSignInClient);
+        LoggedUser.getInstance().setmUserAccount(null);
+        //((SettingsActivity)getActivity())loadingProgressBar.setVisibility(View.GONE);
+        ((SettingsActivity)getActivity()).updateUI();
+    }
+
+
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(preferenceChangeListener);
+
+        Preference orgColor = findPreference(PREF_ORIGIN_COLOR);
+        Preference dstColor = findPreference(PREF_DESTINATION_COLOR);
+
+        //orgColor.setDefaultValue(getPreferenceScreen().getSharedPreferences().getString(PREF_ORIGIN_COLOR,""));
+        //dstColor.setDefaultValue(getPreferenceScreen().getSharedPreferences().getString(PREF_DESTINATION_COLOR,""));
+
+        Preference preference = findPreference(PREF_REMOVE_ACCOUNT);
+        preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setCancelable(true);
+                builder.setTitle("Are you sure?");
+                builder.setMessage("Your account will be deleted");
+                builder.setPositiveButton("Confirm",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                deleteUser();
+                                Toast.makeText(getContext(), "Inside", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                builder.show();
+                Toast.makeText(getContext(), "Clicked", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
     }
 
     @Override
@@ -81,8 +209,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
+
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+
 }

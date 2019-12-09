@@ -157,13 +157,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         finish();
                         return true;
                     case R.id.settings:
-                        text = "SETTINGS PLACEHOLDER";
-                        duration = Toast.LENGTH_LONG;
                         Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
                         startActivity(intent);
-
-                        toast = Toast.makeText(getApplicationContext(), text, duration);
-                        toast.show();
                         return true;
                     default:
                         return false;
@@ -512,8 +507,142 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void addMarkersToMap(DirectionsResult results, GoogleMap mMap) {
-        markers.add(mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].startLocation.lat,results.routes[0].legs[0].startLocation.lng)).title(results.routes[0].legs[0].startAddress)));
-        markers.add(mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng)).title(results.routes[0].legs[0].endAddress).snippet(getEndLocationTitle(results))));
+
+        String orgColor = mSharedPreference.getString("origin_color","");
+        String dstColor = mSharedPreference.getString("destination_color","");
+
+        MarkerOptions origin = new MarkerOptions();
+        MarkerOptions destination = new MarkerOptions();
+
+        switch (orgColor) {
+            case "Azure":
+                origin = new MarkerOptions()
+                        .position(new LatLng(results.routes[0].legs[0].startLocation.lat,results.routes[0].legs[0].startLocation.lng))
+                        .title(results.routes[0].legs[0].startAddress)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                break;
+            case "Cyan":
+                origin = new MarkerOptions()
+                        .position(new LatLng(results.routes[0].legs[0].startLocation.lat,results.routes[0].legs[0].startLocation.lng))
+                        .title(results.routes[0].legs[0].startAddress)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
+                break;
+            case "Blue":
+                origin = new MarkerOptions()
+                        .position(new LatLng(results.routes[0].legs[0].startLocation.lat,results.routes[0].legs[0].startLocation.lng))
+                        .title(results.routes[0].legs[0].startAddress)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                break;
+            case "Green":
+                origin = new MarkerOptions()
+                        .position(new LatLng(results.routes[0].legs[0].startLocation.lat,results.routes[0].legs[0].startLocation.lng))
+                        .title(results.routes[0].legs[0].startAddress)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                break;
+            case "Magenta":
+                origin = new MarkerOptions()
+                        .position(new LatLng(results.routes[0].legs[0].startLocation.lat,results.routes[0].legs[0].startLocation.lng))
+                        .title(results.routes[0].legs[0].startAddress)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+                break;
+            case "Orange":
+                origin = new MarkerOptions()
+                        .position(new LatLng(results.routes[0].legs[0].startLocation.lat,results.routes[0].legs[0].startLocation.lng))
+                        .title(results.routes[0].legs[0].startAddress)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+                break;
+            case "Red":
+                origin = new MarkerOptions()
+                        .position(new LatLng(results.routes[0].legs[0].startLocation.lat,results.routes[0].legs[0].startLocation.lng))
+                        .title(results.routes[0].legs[0].startAddress)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                break;
+            case "Rose":
+                origin = new MarkerOptions()
+                        .position(new LatLng(results.routes[0].legs[0].startLocation.lat,results.routes[0].legs[0].startLocation.lng))
+                        .title(results.routes[0].legs[0].startAddress)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+                break;
+            case "Violet":
+                origin = new MarkerOptions()
+                        .position(new LatLng(results.routes[0].legs[0].startLocation.lat,results.routes[0].legs[0].startLocation.lng))
+                        .title(results.routes[0].legs[0].startAddress)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
+                break;
+            case "Yellow":
+                origin = new MarkerOptions()
+                        .position(new LatLng(results.routes[0].legs[0].startLocation.lat,results.routes[0].legs[0].startLocation.lng))
+                        .title(results.routes[0].legs[0].startAddress)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+                break;
+        }
+
+        switch (dstColor) {
+            case "Azure":
+                destination = new MarkerOptions()
+                        .position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng))
+                        .title(results.routes[0].legs[0].endAddress)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                break;
+            case "Cyan":
+                destination = new MarkerOptions()
+                        .position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng))
+                        .title(results.routes[0].legs[0].endAddress)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
+                break;
+            case "Blue":
+                destination = new MarkerOptions()
+                        .position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng))
+                        .title(results.routes[0].legs[0].endAddress)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                break;
+            case "Green":
+                destination = new MarkerOptions()
+                        .position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng))
+                        .title(results.routes[0].legs[0].endAddress)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                break;
+            case "Magenta":
+                destination = new MarkerOptions()
+                        .position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng))
+                        .title(results.routes[0].legs[0].endAddress)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+                break;
+            case "Orange":
+                destination = new MarkerOptions()
+                        .position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng))
+                        .title(results.routes[0].legs[0].endAddress)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+                break;
+            case "Red":
+                destination = new MarkerOptions()
+                        .position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng))
+                        .title(results.routes[0].legs[0].endAddress)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                break;
+            case "Rose":
+                destination = new MarkerOptions()
+                        .position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng))
+                        .title(results.routes[0].legs[0].endAddress)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+                break;
+            case "Violet":
+                destination = new MarkerOptions()
+                        .position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng))
+                        .title(results.routes[0].legs[0].endAddress)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
+                break;
+            case "Yellow":
+                destination = new MarkerOptions()
+                        .position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng))
+                        .title(results.routes[0].legs[0].endAddress)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+                break;
+        }
+
+
+        markers.add(mMap.addMarker(origin));
+        markers.add(mMap.addMarker(destination));
     }
 
     private String getEndLocationTitle(DirectionsResult results){
