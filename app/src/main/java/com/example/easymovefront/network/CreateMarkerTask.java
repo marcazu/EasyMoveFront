@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.widget.Toast;
 
 import com.example.easymovefront.data.model.CurrentBitmap;
+import com.example.easymovefront.data.model.LoggedUser;
 import com.example.easymovefront.ui.maps.MapsActivity;
 
 import org.json.JSONException;
@@ -30,7 +31,7 @@ public class CreateMarkerTask extends AsyncTask<String, Void, JSONObject>
 {
     private Context mContext;
 
-    public String postUrl= "https://easymov.herokuapp.com/obstacle";
+    public String postUrl= "https://easymov.herokuapp.com/rest/obstacle";
     public String imageUrl ="http://sharefy.tk/api/publication";
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
@@ -70,8 +71,11 @@ public class CreateMarkerTask extends AsyncTask<String, Void, JSONObject>
 
                 RequestBody body = RequestBody.create(JSON, postBody);
 
+                String header = "Bearer " + LoggedUser.getInstance().getToken();
+
                 Request request = new Request.Builder()
                         .url(postUrl)
+                        .header("Authorization", header)
                         .post(body)
                         .build();
 

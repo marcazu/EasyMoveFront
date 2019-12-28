@@ -2,7 +2,10 @@ package com.example.easymovefront.network;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
+
+import com.example.easymovefront.data.model.LoggedUser;
 
 import org.json.JSONObject;
 
@@ -16,7 +19,7 @@ public class LikeObstacleTask extends AsyncTask<String, Void, Integer> {
 
     private Context mContext;
 
-    public String postUrl= "https://easymov.herokuapp.com/obstacle/";
+    public String postUrl= "https://easymov.herokuapp.com/rest/obstacle/";
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     public static int returnCode = -1;
@@ -36,8 +39,11 @@ public class LikeObstacleTask extends AsyncTask<String, Void, Integer> {
 
             RequestBody body = RequestBody.create(JSON, "");
 
+            String header = "Bearer " + LoggedUser.getInstance().getToken();
+
             Request request = new Request.Builder()
                     .url(postUrl)
+                    .header("Authorization", header)
                     .put(body)
                     .build();
 

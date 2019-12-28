@@ -74,6 +74,7 @@ public class DisplayObstacleFragment extends DialogFragment {
         mDislikenumber = editTextView.findViewById(R.id.dislikenumber);
         mLike = editTextView.findViewById(R.id.likeButton);
         mDislike = editTextView.findViewById(R.id.dislikeButton);
+        mResolved = editTextView.findViewById(R.id.resolvedObstacleButton);
         mEdit = editTextView.findViewById(R.id.editObstacleButton);
         updateEditButton();
         updateLikeStatus();
@@ -118,6 +119,19 @@ public class DisplayObstacleFragment extends DialogFragment {
                 updateLikeNumber("treuredislike");
                 LikeObstacleTask myTask = new LikeObstacleTask(mContext);
                 myTask.execute(mId, "treuredislike", LoggedUser.getInstance().getId());
+            }
+        });
+        mResolved.setOnLikeListener(new OnLikeListener() {
+            @Override
+            public void liked(LikeButton likeButton) {
+                LikeObstacleTask myTask = new LikeObstacleTask(mContext);
+                myTask.execute(mId, "solucionar", LoggedUser.getInstance().getId());
+            }
+
+            @Override
+            public void unLiked(LikeButton likeButton) {
+                LikeObstacleTask myTask = new LikeObstacleTask(mContext);
+                myTask.execute(mId, "truresolucionar", LoggedUser.getInstance().getId());
             }
         });
         CreateImageFromUrlTask pictask = new CreateImageFromUrlTask(mContext);
@@ -203,6 +217,16 @@ public class DisplayObstacleFragment extends DialogFragment {
                     }
                 }
             }
+            jarray = json.getJSONArray("usuarisResolt");
+            if (!mResolved.isLiked()) {
+                for (int i = 0; i < jarray.length(); i++) {
+                    if (jarray.getInt(i) == Integer.parseInt(LoggedUser.getInstance().getId())) {
+                        mResolved.setLiked(true);
+                        break;
+                    }
+                }
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

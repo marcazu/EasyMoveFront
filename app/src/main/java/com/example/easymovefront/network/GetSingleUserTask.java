@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import com.example.easymovefront.data.model.LoggedUser;
+
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -17,7 +19,7 @@ import okhttp3.Response;
 public class GetSingleUserTask extends AsyncTask<String, Void, String> {
     private Context mContext;
 
-    public String getUrl= "https://easymov.herokuapp.com/usuari";
+    public String getUrl= "https://easymov.herokuapp.com/rest/usuari";
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     public static int returnCode = -1;
@@ -34,8 +36,11 @@ public class GetSingleUserTask extends AsyncTask<String, Void, String> {
 
         OkHttpClient client = new OkHttpClient();
 
+        String header = "Bearer " + LoggedUser.getInstance().getToken();
+
         Request request = new Request.Builder()
                 .url(getUrl)
+                .header("Authorization", header)
                 .get()
                 .build();
 

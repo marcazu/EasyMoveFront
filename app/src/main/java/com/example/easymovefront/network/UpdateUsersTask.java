@@ -67,7 +67,11 @@ public class UpdateUsersTask extends AsyncTask<String, Void, Integer>
                     // Get back the response and convert it to a Book object
                     returnCode = 1;
                     mResponse = response.body().string();
-                    LoggedUser.getInstance().setId(mResponse);
+                    JSONObject jsonResponse = new JSONObject(mResponse);
+                    String id = jsonResponse.getString("id");
+                    String token = jsonResponse.getString("token");
+                    LoggedUser.getInstance().setId(id);
+                    LoggedUser.getInstance().setToken(token);
 
                 }
                 else {

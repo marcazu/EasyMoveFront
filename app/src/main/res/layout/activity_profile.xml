@@ -33,6 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/pictureProfile"
+            android:layout_marginLeft="10dp"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
@@ -40,6 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/nameProfile"
+            android:layout_marginLeft="10dp"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
 
@@ -50,7 +52,9 @@
             android:textColor="@color/colorWhite"
             android:text="Sign Out"
             android:background="@color/colorBlue"
-            android:layout_below="@id/pointsUser"/>
+            android:layout_below="@id/pointsUser"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"/>
 
 
 

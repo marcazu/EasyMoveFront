@@ -12,9 +12,13 @@ public class LoggedUser {
 
     private String id;
 
+    private String token;
+
     public void setmUserAccount(GoogleSignInAccount acc) { this.mUserAccount = acc; }
 
     public void setId(String id) { this.id = id; }
+
+    public void setToken (String token) { this.token = token; }
 
     public void setmGoogleSignInClient(GoogleSignInClient client) { this.mGoogleSignInClient = client;}
 
@@ -23,6 +27,8 @@ public class LoggedUser {
     public GoogleSignInClient getmGoogleSignInClient() { return this.mGoogleSignInClient;}
 
     public String getId() { return this.id; }
+
+    public String getToken() { return this.token; }
 
     public static LoggedUser getInstance() {
         return ourInstance;
