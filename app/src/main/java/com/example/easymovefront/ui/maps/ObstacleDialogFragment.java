@@ -27,6 +27,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.easymovefront.R;
 
@@ -44,7 +45,7 @@ public class ObstacleDialogFragment extends DialogFragment {
     private ImageView img;
     private Button camerabutton;
     private Boolean isCameraEnabled = true;
-    private Bitmap mPicture;
+    private Bitmap mPicture = null;
     private String mPicturePath;
 
     public interface OnFragmentInteractionListener {
@@ -100,7 +101,31 @@ public class ObstacleDialogFragment extends DialogFragment {
                                 String description = desc.getText().toString();
                                 String photography = null;
                                 String title = tit.getText().toString();
-                                mListener.onOkPressedObstacle(locat, description, mPicture, title);
+                                boolean valid = true;
+                                CharSequence text = "";
+                                if (mPicture == null) {
+                                    valid = false;
+                                    text = getString(R.string.missingPhoto);
+                                }
+                                if (title.equals("")) {
+                                    valid = false;
+                                    text = getString(R.string.missingTitle);
+                                }
+                                if (description.equals("")) {
+                                    valid = false;
+                                    text = getString(R.string.missingDesc);
+                                }
+                                if (!valid) {
+                                    int duration;
+                                    Toast toast;
+                                    duration = Toast.LENGTH_LONG;
+
+                                    toast = Toast.makeText(mContext, text, duration);
+                                    toast.show();
+                                }
+                                else {
+                                    mListener.onOkPressedObstacle(locat, description, mPicture, title);
+                                }
                             }
                 })
                 .setNegativeButton(R.string.cancelButton, new DialogInterface.OnClickListener() {
