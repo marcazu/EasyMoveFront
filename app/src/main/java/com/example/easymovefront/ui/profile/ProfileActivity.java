@@ -24,6 +24,7 @@ import com.example.easymovefront.network.CreateImageFromUrlTask;
 import com.example.easymovefront.network.CreateMarkerTask;
 import com.example.easymovefront.network.GetSingleUserTask;
 import com.example.easymovefront.ui.maps.MapsActivity;
+import com.example.easymovefront.ui.ranking.RankingActivity;
 import com.example.easymovefront.ui.settings.SettingsActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -161,6 +162,13 @@ public class ProfileActivity extends AppCompatActivity {
                         finish();
                         return true;
                     case R.id.profile:
+                        return true;
+                    case R.id.ranking:
+                        drawerHeader.setVisibility(View.GONE);
+                        loadingDrawer.setVisibility(View.VISIBLE);
+                        Intent rankingIntent = new Intent(getApplicationContext(), RankingActivity.class);
+                        startActivity(rankingIntent);
+                        finish();
                         return true;
                     case R.id.settings:
                         text = "SETTINGS PLACEHOLDER";

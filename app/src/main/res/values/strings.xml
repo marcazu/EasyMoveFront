@@ -10,9 +10,12 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="title_activity_maps">Map</string>
+    <string name="title_activity_profile">Profile</string>
+    <string name="title_activity_ranking">Ranking</string>
     <string name="options_menu">Options</string>
     <string name="Route">Routes</string>
     <string name="Profile">Profile</string>
+    <string name="Ranking">Ranking</string>
     <string name="Settings">Settings</string>
     <string name="Obstacle">Obstacle</string>
     <string name="Source">Source (Empty for current position)</string>

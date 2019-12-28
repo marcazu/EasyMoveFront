@@ -37,6 +37,7 @@ import com.example.easymovefront.data.model.ObstacleMap;
 import com.example.easymovefront.network.CreateMarkerTask;
 import com.example.easymovefront.network.GetMarkerTask;
 import com.example.easymovefront.ui.profile.ProfileActivity;
+import com.example.easymovefront.ui.ranking.RankingActivity;
 import com.example.easymovefront.ui.settings.SettingsActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -160,6 +161,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         loadingDrawer.setVisibility(View.VISIBLE);
                         Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
                         startActivity(profileIntent);
+                        finish();
+                        return true;
+                    case R.id.ranking:
+                        drawerHeader.setVisibility(View.GONE);
+                        loadingDrawer.setVisibility(View.VISIBLE);
+                        Intent rankingIntent = new Intent(getApplicationContext(), RankingActivity.class);
+                        startActivity(rankingIntent);
                         finish();
                         return true;
                     case R.id.settings:
