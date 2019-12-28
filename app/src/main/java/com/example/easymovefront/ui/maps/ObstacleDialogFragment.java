@@ -6,34 +6,32 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-<<<<<<< HEAD
-import android.widget.TextView;
-import android.widget.Toast;
-=======
->>>>>>> 9e0e9c9cd28c13256b0f33ee44ca2fbea2951acf
-
-import com.example.easymovefront.R;
-
-import java.io.File;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
+
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.easymovefront.R;
+
+import java.io.File;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -46,11 +44,9 @@ public class ObstacleDialogFragment extends DialogFragment {
     private Context mContext;
     private ImageView img;
     private Button camerabutton;
-    private Button gallerybutton;
     private Boolean isCameraEnabled = true;
     private Bitmap mPicture = null;
     private String mPicturePath;
-    private boolean galleryButtonClicked;
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
@@ -74,24 +70,6 @@ public class ObstacleDialogFragment extends DialogFragment {
         camerabutton = editTextView.findViewById(R.id.button_callcamera);
         img = editTextView.findViewById(R.id.imageviewPhoto);
         camerabutton.setOnClickListener(new View.OnClickListener() {
-                                            public void onClick(View v) {
-                                                if (isCameraEnabled) {
-                                                    File dir = Environment.getExternalStoragePublicDirectory(
-                                                            Environment.DIRECTORY_PICTURES);
-                                                    mPicturePath = dir.getAbsolutePath() + "/" + "obstacle.png";
-                                                    File file = new File(mPicturePath);
-                                                    Uri outputfile = FileProvider.getUriForFile(mContext, mContext.getApplicationContext().
-                                                            getPackageName() + ".provider", file);
-                                                    Intent takePictureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                                                    takePictureIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                                                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputfile );
-                                                    startActivityForResult(takePictureIntent, 1);
-
-                                                }
-                                            }
-                                        });
-        gallerybutton = editTextView.findViewById(R.id.button_callgallery);
-        gallerybutton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (isCameraEnabled) {
                     File dir = Environment.getExternalStoragePublicDirectory(
@@ -100,10 +78,10 @@ public class ObstacleDialogFragment extends DialogFragment {
                     File file = new File(mPicturePath);
                     Uri outputfile = FileProvider.getUriForFile(mContext, mContext.getApplicationContext().
                             getPackageName() + ".provider", file);
-                    Intent loadPictureIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    loadPictureIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    loadPictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputfile );
-                    startActivityForResult(loadPictureIntent, 1);
+                    Intent takePictureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    takePictureIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputfile );
+                    startActivityForResult(takePictureIntent, 1);
 
                 }
             }
@@ -113,42 +91,42 @@ public class ObstacleDialogFragment extends DialogFragment {
         builder.setView(editTextView)
                 // Add action buttons
                 .setPositiveButton(R.string.okButton, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                EditText loc = editTextView.findViewById(R.id.location);
-                                EditText desc = editTextView.findViewById(R.id.description);
-                                EditText photo = null; //editTextView.findViewById(R.id.photo);
-                                EditText tit = editTextView.findViewById(R.id.title);
-                                String locat = "";
-                                String description = desc.getText().toString();
-                                String photography = null;
-                                String title = tit.getText().toString();
-                                boolean valid = true;
-                                CharSequence text = "";
-                                if (mPicture == null) {
-                                    valid = false;
-                                    text = getString(R.string.missingPhoto);
-                                }
-                                if (title.equals("")) {
-                                    valid = false;
-                                    text = getString(R.string.missingTitle);
-                                }
-                                if (description.equals("")) {
-                                    valid = false;
-                                    text = getString(R.string.missingDesc);
-                                }
-                                if (!valid) {
-                                    int duration;
-                                    Toast toast;
-                                    duration = Toast.LENGTH_LONG;
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        EditText loc = editTextView.findViewById(R.id.location);
+                        EditText desc = editTextView.findViewById(R.id.description);
+                        EditText photo = null; //editTextView.findViewById(R.id.photo);
+                        EditText tit = editTextView.findViewById(R.id.title);
+                        String locat = "";
+                        String description = desc.getText().toString();
+                        String photography = null;
+                        String title = tit.getText().toString();
+                        boolean valid = true;
+                        CharSequence text = "";
+                        if (mPicture == null) {
+                            valid = false;
+                            text = getString(R.string.missingPhoto);
+                        }
+                        if (title.equals("")) {
+                            valid = false;
+                            text = getString(R.string.missingTitle);
+                        }
+                        if (description.equals("")) {
+                            valid = false;
+                            text = getString(R.string.missingDesc);
+                        }
+                        if (!valid) {
+                            int duration;
+                            Toast toast;
+                            duration = Toast.LENGTH_LONG;
 
-                                    toast = Toast.makeText(mContext, text, duration);
-                                    toast.show();
-                                }
-                                else {
-                                    mListener.onOkPressedObstacle(locat, description, mPicture, title);
-                                }
-                            }
+                            toast = Toast.makeText(mContext, text, duration);
+                            toast.show();
+                        }
+                        else {
+                            mListener.onOkPressedObstacle(locat, description, mPicture, title);
+                        }
+                    }
                 })
                 .setNegativeButton(R.string.cancelButton, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -159,7 +137,7 @@ public class ObstacleDialogFragment extends DialogFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1 && resultCode == RESULT_OK && !galleryButtonClicked ) {
+        if (requestCode == 1 && resultCode == RESULT_OK) {
             File imgFile = new  File(mPicturePath);
             if(imgFile.exists()){
                 mPicture = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
@@ -167,22 +145,6 @@ public class ObstacleDialogFragment extends DialogFragment {
                 img.setVisibility(View.VISIBLE);
                 camerabutton.setText("CHANGE PHOTO");
             }
-        }
-        else   if (requestCode == 1&& resultCode == RESULT_OK && null != data && galleryButtonClicked) {
-            Uri selectedImage = data.getData();
-            String[] filePathColumn = { MediaStore.Images.Media.DATA };
-            File imgFile = new  File(mPicturePath);
-            Cursor cursor = imgFile.getAbsolutePath(selectedImage,
-                    filePathColumn, null, null, null);
-            cursor.moveToFirst();
-
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String picturePath = cursor.getString(columnIndex);
-            cursor.close();
-
-            img.setImageBitmap(BitmapFactory.decodeFile(picturePath));
-
-            // String picturePath contains the path of selected Image
         }
     }
 

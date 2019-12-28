@@ -45,14 +45,6 @@
         android:layout_below="@id/description"
         android:text="@string/photocamera" />
 
-    <Button
-        android:id="@+id/button_callgallery"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/button_callcamera"
-        android:text="ADD PHOTO FROM GALLERY" />
-
     <ImageView
         android:id="@+id/imageviewPhoto"
         android:layout_width="match_parent"
