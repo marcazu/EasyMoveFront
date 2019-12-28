@@ -7,9 +7,12 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.easymovefront.R;
+import com.example.easymovefront.data.model.RankingUser;
+
+import java.util.ArrayList;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder> {
-    private String[] mDataset;
+    private ArrayList<RankingUser> mDataset;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -24,7 +27,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public RecyclerViewAdapter(String[] myDataset) {
+    public RecyclerViewAdapter(ArrayList<RankingUser> myDataset) {
         mDataset = myDataset;
     }
 
@@ -45,13 +48,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void onBindViewHolder(MyViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.textView.setText(mDataset[position]);
+        holder.textView.setText(mDataset.get(position).getNom());
 
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return mDataset.length;
+        return mDataset.size();
     }
 }

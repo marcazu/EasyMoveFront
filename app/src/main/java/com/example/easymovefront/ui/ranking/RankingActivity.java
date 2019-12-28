@@ -16,10 +16,20 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.easymovefront.R;
+import com.example.easymovefront.data.model.RankingUser;
+import com.example.easymovefront.network.GetMarkerTask;
+import com.example.easymovefront.network.GetRankingTask;
 import com.example.easymovefront.ui.maps.MapsActivity;
 import com.example.easymovefront.ui.profile.ProfileActivity;
 import com.example.easymovefront.ui.settings.SettingsActivity;
 import com.google.android.material.navigation.NavigationView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class RankingActivity extends AppCompatActivity  {
     private RecyclerView recyclerView;
@@ -32,6 +42,8 @@ public class RankingActivity extends AppCompatActivity  {
     DrawerLayout dLayout;
     private ProgressBar loadingDrawer;
     private ImageView drawerHeader;
+
+    private ArrayList<RankingUser> mUserList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +66,34 @@ public class RankingActivity extends AppCompatActivity  {
         recyclerView.setLayoutManager(layoutManager);
 
         // specify an adapter (see also next example)
-        String[] s = {"1", "2"};
-        mAdapter = new RecyclerViewAdapter(s);
+        getRankingList();
+        mAdapter = new RecyclerViewAdapter(mUserList);
         recyclerView.setAdapter(mAdapter);
+    }
+
+    private void getRankingList() {
+        GetRankingTask myTask = new GetRankingTask(getApplicationContext());
+        myTask.execute();
+        String result = "";
+        try {
+            result = myTask.get();
+            JSONArray Jarray = new JSONArray(result);
+            mUserList = new ArrayList<>();
+            for(int i=0; i<Jarray.length(); i++) {
+                JSONObject dataObj = Jarray.getJSONObject(i);
+                String nom = dataObj.getString("nom");
+                String puntuacio = dataObj.getString("puntuacio");
+                RankingUser u = new RankingUser(nom, Integer.valueOf(puntuacio));
+                mUserList.add(u);
+            }
+
+        } catch ( ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private void setNavigationDrawer() {
