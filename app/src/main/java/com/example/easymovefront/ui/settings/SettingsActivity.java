@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -20,6 +21,7 @@ import com.example.easymovefront.R;
 import com.example.easymovefront.data.model.LoggedUser;
 import com.example.easymovefront.ui.maps.MapsActivity;
 import com.example.easymovefront.ui.profile.ProfileActivity;
+import com.example.easymovefront.ui.ranking.RankingActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -33,6 +35,8 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
     private ProgressBar mloadingBar;
     DrawerLayout dLayout;
     private ActionBarDrawerToggle mDrawerToggle;
+    private ProgressBar loadingDrawer;
+    private ImageView drawerHeader;
 
 
     @Override
@@ -92,6 +96,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         // ...
+
                     }
                 });
     }
@@ -116,35 +121,39 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
         dLayout.addDrawerListener(mDrawerToggle);
         NavigationView navView = (NavigationView) findViewById(R.id.navigationSettings); // initiate a Navigation View
         // implement setNavigationItemSelectedListener event on NavigationView
-        navView.getMenu().getItem(2).setChecked(true);
+        navView.getMenu().getItem(3).setChecked(true);
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
+                loadingDrawer = findViewById(R.id.loadingDrawer);
+                drawerHeader = findViewById(R.id.imageHeader);
                 CharSequence text;
                 int duration;
                 Toast toast;
                 // check selected menu item's id and replace a Fragment Accordingly
                 switch (menuItem.getItemId()) {
                     case R.id.mapActivity:
+                        drawerHeader.setVisibility(View.GONE);
+                        loadingDrawer.setVisibility(View.VISIBLE);
                         Intent mapIntent = new Intent(getApplicationContext(), MapsActivity.class);
                         startActivity(mapIntent);
                         finish();
                         return true;
                     case R.id.profile:
-                        text = "PROFILE PLACEHOLDER";
-                        duration = Toast.LENGTH_LONG;
-                        Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
-                        startActivity(intent);
-
-                        toast = Toast.makeText(getApplicationContext(), text, duration);
-                        toast.show();
+                        drawerHeader.setVisibility(View.GONE);
+                        loadingDrawer.setVisibility(View.VISIBLE);
+                        Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+                        startActivity(profileIntent);
+                        finish();
                         return true;
                     case R.id.settings:
-                        text = "SETTINGS PLACEHOLDER";
-                        duration = Toast.LENGTH_LONG;
-
-                        toast = Toast.makeText(getApplicationContext(), text, duration);
-                        toast.show();
+                        return true;
+                    case R.id.ranking:
+                        drawerHeader.setVisibility(View.GONE);
+                        loadingDrawer.setVisibility(View.VISIBLE);
+                        Intent rankingIntent = new Intent(getApplicationContext(), RankingActivity.class);
+                        startActivity(rankingIntent);
+                        finish();
                         return true;
                     default:
                         return false;

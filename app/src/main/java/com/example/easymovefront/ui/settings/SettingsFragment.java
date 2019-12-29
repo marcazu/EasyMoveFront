@@ -130,6 +130,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         //((SettingsActivity)getActivity())loadingProgressBar.setVisibility(View.GONE);
         ((SettingsActivity)getActivity()).updateUI();
         getActivity().finish();
+
     }
 
 
