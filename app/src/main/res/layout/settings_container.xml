@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout_sett"
     tools:context=".ui.settings.SettingsActivity">
     <RelativeLayout
         android:layout_width="match_parent"
@@ -15,17 +17,11 @@
             android:layout_alignParentStart="true"
             android:background="@color/colorBlue"/>
 
-        <fragment
-            android:id="@+id/settingsFragment"
-            android:name="com.example.easymovefront.ui.settings.SettingsFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="?attr/actionBarSize"
-            tools:context=".ui.settings.SettingsActivity" />
 
         <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:id="@+id/fragment_container"
             />
 
@@ -33,11 +29,13 @@
 
 
     <com.google.android.material.navigation.NavigationView
-        android:id="@+id/navigationProfile"
+        android:id="@+id/navigationSettings"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:fitsSystemWindows="true"/>
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/drawer_header"
+        app:menu="@menu/menu_drawerlayout" />
 
 
 

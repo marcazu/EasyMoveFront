@@ -42,6 +42,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public static final String PREF_ORIGIN_COLOR = "origin_color";
     public static final String PREF_DESTINATION_COLOR = "destination_color";
 
+    public SettingsFragment(){}
+
     public SettingsFragment(Context context) {
         mContext = context;
     }
