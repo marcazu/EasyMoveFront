@@ -9,11 +9,19 @@
         android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbarProfile"
+            android:id="@+id/toolbarSettings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:background="@color/colorBlue"/>
+
+        <fragment
+            android:id="@+id/settingsFragment"
+            android:name="com.example.easymovefront.ui.settings.SettingsFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="?attr/actionBarSize"
+            tools:context=".ui.settings.SettingsActivity" />
 
         <FrameLayout
             android:layout_width="wrap_content"

@@ -2,26 +2,18 @@ package com.example.easymovefront.ui.settings;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.EditTextPreference;
-import androidx.preference.ListPreference;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceCategory;
+import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
 
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.RingtonePreference;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.easymovefront.R;
 import com.example.easymovefront.data.model.LoggedUser;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -29,15 +21,24 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
 
 
     private SettingsFragment mSettingsFragment;
+    private Toolbar mToolbar;
+    private ProgressBar mloadingBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(android.R.id.content, new SettingsFragment(this))
                 .commit();
 
+        mToolbar = (Toolbar) findViewById(R.id.toolbarSettings);
+
+        mToolbar.setTitle("");
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         PreferenceManager.setDefaultValues(this, R.xml.activity_settings, false);
 
