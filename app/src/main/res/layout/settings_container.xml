@@ -1,17 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.settings.SettingsActivity">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <FrameLayout
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbarProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:background="@color/colorBlue"/>
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/fragment_container"
+            />
+
+    </RelativeLayout>
+
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigationProfile"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/fragment_container"
-        />
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"/>
 
 
 
-
-</LinearLayout>
+</androidx.drawerlayout.widget.DrawerLayout>
