@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import com.example.easymovefront.data.model.LoggedUser;
+
 import java.io.IOException;
 
 import okhttp3.MediaType;
@@ -15,7 +17,7 @@ public class DeleteUserTask  extends AsyncTask<String, Void, String> {
 
     private Context mContext;
 
-    public String deleteUrl= "https://easymov.herokuapp.com/usuari";
+    public String deleteUrl= "https://easymov.herokuapp.com/rest/usuari";
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     public static int returnCode = -1;
@@ -31,8 +33,11 @@ public class DeleteUserTask  extends AsyncTask<String, Void, String> {
         OkHttpClient client = new OkHttpClient();
         deleteUrl = deleteUrl + "/" + strings[0];
 
+        String header = "Bearer " + LoggedUser.getInstance().getToken();
+
         Request request = new Request.Builder()
                 .url(deleteUrl)
+                .header("Authorization", header)
                 .delete()
                 .build();
 

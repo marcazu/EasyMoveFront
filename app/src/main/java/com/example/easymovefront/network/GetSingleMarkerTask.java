@@ -24,7 +24,7 @@ import okhttp3.Response;
 public class GetSingleMarkerTask extends AsyncTask<String, Void, String> {
     private Context mContext;
 
-    public String getUrl= "https://easymov.herokuapp.com/obstacle";
+    public String getUrl= "https://easymov.herokuapp.com/rest/obstacle";
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     public static int returnCode = -1;
@@ -47,8 +47,11 @@ public class GetSingleMarkerTask extends AsyncTask<String, Void, String> {
 
         RequestBody body = RequestBody.create(JSON, postBody);
 
+        String header = "Bearer " + LoggedUser.getInstance().getToken();
+
         Request request = new Request.Builder()
                 .url(getUrl)
+                .header("Authorization", header)
                 .get()
                 .build();
 

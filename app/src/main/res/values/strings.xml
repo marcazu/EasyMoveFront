@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">EasyMoveFront</string>
+    <string name="app_name">EasyMov</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
@@ -10,20 +10,26 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="title_activity_maps">Map</string>
+    <string name="title_activity_profile">Profile</string>
+    <string name="title_activity_ranking">Ranking</string>
     <string name="options_menu">Options</string>
     <string name="Route">Routes</string>
     <string name="Profile">Profile</string>
+    <string name="Ranking">Ranking</string>
     <string name="Settings">Settings</string>
     <string name="Obstacle">Obstacle</string>
     <string name="Source">Source (Empty for current position)</string>
     <string name="Destination">Destination</string>
     <string name="address_source_notfound">Couldn\'t find any source with that address</string>
     <string name="address_destination_notfound">Couldn\'t find any destination with that address</string>
+    <string name="missingPhoto">Please add a picture before submitting the obstacle</string>
+    <string name="missingTitle">Please add a title</string>
+    <string name="missingDesc">Please fill in the description of the obstacle</string>
     <string name="okButton">Confirm</string>
     <string name="cancelButton">Cancel</string>
     <string name="drawer_open">Open drawer</string>
     <string name="drawer_close">Close drawer</string>
-    <string name="photocamera">Add a photo</string>
+    <string name="photocamera">Add a photo*</string>
     <string name="like">Like</string>
     <string name="dislike">Dislike</string>
 

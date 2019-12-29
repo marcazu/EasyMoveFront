@@ -2,13 +2,16 @@
 <menu
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:EasyMoveFront="http://schemas.android.com/apk/res-auto" >
-    >
+
     <item android:id="@+id/mapActivity"
         android:icon="@drawable/map_icon"
         android:title="@string/title_activity_maps"/>
     <item android:id="@+id/profile"
         android:icon="@drawable/profile_icon"
         android:title="@string/Profile"/>
+    <item android:id="@+id/ranking"
+        android:icon="@drawable/profile_icon"
+        android:title="@string/Ranking"/>
     <item android:id="@+id/settings"
         android:icon="@drawable/settings_icon"
         android:title="@string/Settings" />

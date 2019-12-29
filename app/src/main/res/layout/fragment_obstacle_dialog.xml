@@ -24,7 +24,7 @@
         android:layout_marginRight="4dp"
         android:layout_marginBottom="4dp"
         android:layout_below="@id/location"
-        android:hint="Title"/>
+        android:hint="Title*"/>
 
     <EditText
         android:id="@+id/description"
@@ -36,7 +36,7 @@
         android:layout_marginRight="4dp"
         android:layout_marginBottom="4dp"
         android:layout_below="@id/title"
-        android:hint="Description"/>
+        android:hint="Description*"/>
     <Button
         android:id="@+id/button_callcamera"
         android:layout_width="wrap_content"
