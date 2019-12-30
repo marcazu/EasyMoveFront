@@ -1,6 +1,7 @@
 package com.example.easymovefront.ui.ranking;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.easymovefront.R;
+import com.example.easymovefront.data.model.LoggedUser;
 import com.example.easymovefront.data.model.RankingUser;
 
 import java.util.ArrayList;
@@ -59,6 +61,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         int rank = position + 1;
         String text = String.valueOf(rank) + ". " + mDataset.get(position).getNom() + "\n   " + mDataset.get(position).getPuntuacio() + " points\n";
         holder.textView.setText(text);
+        if (LoggedUser.getInstance().getId().equals(String.valueOf(mDataset.get(position).getId())))
+            holder.textView.setTextColor(Color.rgb(0,133,119));
         if (rank == 1)
             holder.imgView.setImageResource(R.drawable.first);
         else if (rank == 2)
