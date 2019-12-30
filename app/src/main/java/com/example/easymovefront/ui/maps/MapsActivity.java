@@ -419,6 +419,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         .title(title)
                         .snippet(desc)
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+//                BitmapDescriptorFactory.fromResource(R.drawable.pin_obstacle)
                 addMarkerToBack(desc, loc.latitude, loc.longitude, title, mark);
 
             }

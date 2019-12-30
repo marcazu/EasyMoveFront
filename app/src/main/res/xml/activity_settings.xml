@@ -46,6 +46,7 @@
         <Preference
             android:key="removeAccount"
             android:title="Remove Account"
+
             android:summary="Remove your account from application" />
     </PreferenceCategory>
 </PreferenceScreen>
