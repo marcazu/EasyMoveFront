@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -67,7 +68,7 @@ public class RankingActivity extends AppCompatActivity  {
 
         // specify an adapter (see also next example)
         getRankingList();
-        mAdapter = new RecyclerViewAdapter(mUserList);
+        mAdapter = new RecyclerViewAdapter(this, mUserList);
         recyclerView.setAdapter(mAdapter);
     }
 
@@ -157,5 +158,10 @@ public class RankingActivity extends AppCompatActivity  {
                 }
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!dLayout.isDrawerOpen(GravityCompat.START)) dLayout.openDrawer(GravityCompat.START);
     }
 }

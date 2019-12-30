@@ -1,7 +1,11 @@
 package com.example.easymovefront.ui.ranking;
 
+import android.content.Context;
+import android.media.Image;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,6 +17,7 @@ import java.util.ArrayList;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder> {
     private ArrayList<RankingUser> mDataset;
+    private Context mContext;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -20,15 +25,18 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         public TextView textView;
-        public MyViewHolder(TextView v) {
+        public ImageView imgView;
+        public MyViewHolder(View v) {
             super(v);
-            textView = v;
+            textView = (TextView) v.findViewById(R.id.rankTextView);
+            imgView = (ImageView) v.findViewById(R.id.rankIcon);
         }
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public RecyclerViewAdapter(ArrayList<RankingUser> myDataset) {
+    public RecyclerViewAdapter(Context context, ArrayList<RankingUser> myDataset) {
         mDataset = myDataset;
+        mContext = context;
     }
 
     // Create new views (invoked by the layout manager)
@@ -36,7 +44,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public RecyclerViewAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent,
                                                      int viewType) {
         // create a new view
-        TextView v = (TextView) LayoutInflater.from(parent.getContext())
+        View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.rankingtext, parent, false);
 
         MyViewHolder vh = new MyViewHolder(v);
@@ -48,7 +56,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void onBindViewHolder(MyViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.textView.setText(mDataset.get(position).getNom());
+        int rank = position + 1;
+        String text = String.valueOf(rank) + ". " + mDataset.get(position).getNom() + "\n   " + mDataset.get(position).getPuntuacio() + " points\n";
+        holder.textView.setText(text);
+        if (rank == 1)
+            holder.imgView.setImageResource(R.drawable.first);
+        else if (rank == 2)
+            holder.imgView.setImageResource(R.drawable.second);
+        else if (rank == 3)
+            holder.imgView.setImageResource(R.drawable.third);
+
 
     }
 
