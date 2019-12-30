@@ -84,7 +84,8 @@ public class RankingActivity extends AppCompatActivity  {
                 JSONObject dataObj = Jarray.getJSONObject(i);
                 String nom = dataObj.getString("nom");
                 String puntuacio = dataObj.getString("puntuacio");
-                RankingUser u = new RankingUser(nom, Integer.valueOf(puntuacio));
+                String id = dataObj.getString("id");
+                RankingUser u = new RankingUser(nom, Integer.valueOf(puntuacio), Integer.valueOf(id));
                 mUserList.add(u);
             }
 

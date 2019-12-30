@@ -6,12 +6,17 @@ public class RankingUser {
 
     private Integer puntuacio;
 
-    public RankingUser(String nom, Integer puntuacio) {
+    private Integer id;
+
+    public RankingUser(String nom, Integer puntuacio, Integer id) {
         this.nom = nom;
         this.puntuacio = puntuacio;
+        this.id = id;
     }
 
     public String getNom() { return nom; }
 
     public Integer getPuntuacio() { return puntuacio; }
+
+    public Integer getId() { return id; }
 }
