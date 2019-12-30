@@ -531,15 +531,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .setWriteTimeout(100, TimeUnit.SECONDS);
     }
 
-    private void addMarkersToMap(DirectionsResult results, GoogleMap mMap) {
-        markers.add(mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].startLocation.lat,results.routes[0].legs[0].startLocation.lng)).title(results.routes[0].legs[0].startAddress)));
-        markers.add(mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng)).title(results.routes[0].legs[0].endAddress).snippet(getEndLocationTitle(results))));
-    }
-
     /*private void addMarkersToMap(DirectionsResult results, GoogleMap mMap) {
+        markers.add(mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].startLocation.lat,results.routes[0].legs[0].startLocation.lng)).title(results.routes[0].legs[0].startAddress)));
+        markers.add(mMap.addMarker(
+                new MarkerOptions()
+                        .position(new LatLng(
+                                results.routes[0].legs[0].endLocation.lat,
+                                results.routes[0].legs[0].endLocation.lng))
+                        .title(results.routes[0].legs[0].endAddress)
+                        .snippet(getEndLocationTitle(results))));
+    }*/
 
-        String orgColor = mSharedPreference.getString("origin_color","");
-        String dstColor = mSharedPreference.getString("destination_color","");
+    private void addMarkersToMap(DirectionsResult results, GoogleMap mMap) {
+
+        String orgColor = mSharedPreference.getString("origin_color","Red");
+        String dstColor = mSharedPreference.getString("destination_color","Green");
 
         MarkerOptions origin = new MarkerOptions();
         MarkerOptions destination = new MarkerOptions();
@@ -547,7 +553,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch (orgColor) {
             case "Azure":
                 origin = new MarkerOptions()
-                        .position(new LatLng(results.routes[0].legs[0].startLocation.lat,results.routes[0].legs[0].startLocation.lng))
+                        .position(new LatLng(results.routes[0].legs[0].startLocation.lat,
+                                results.routes[0].legs[0].startLocation.lng))
                         .title(results.routes[0].legs[0].startAddress)
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
                 break;
@@ -612,60 +619,70 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 destination = new MarkerOptions()
                         .position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng))
                         .title(results.routes[0].legs[0].endAddress)
+                        .snippet(getEndLocationTitle(results))
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
                 break;
             case "Cyan":
                 destination = new MarkerOptions()
                         .position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng))
                         .title(results.routes[0].legs[0].endAddress)
+                        .snippet(getEndLocationTitle(results))
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
                 break;
             case "Blue":
                 destination = new MarkerOptions()
                         .position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng))
                         .title(results.routes[0].legs[0].endAddress)
+                        .snippet(getEndLocationTitle(results))
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
                 break;
             case "Green":
                 destination = new MarkerOptions()
                         .position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng))
                         .title(results.routes[0].legs[0].endAddress)
+                        .snippet(getEndLocationTitle(results))
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                 break;
             case "Magenta":
                 destination = new MarkerOptions()
                         .position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng))
                         .title(results.routes[0].legs[0].endAddress)
+                        .snippet(getEndLocationTitle(results))
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
                 break;
             case "Orange":
                 destination = new MarkerOptions()
                         .position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng))
                         .title(results.routes[0].legs[0].endAddress)
+                        .snippet(getEndLocationTitle(results))
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
                 break;
             case "Red":
                 destination = new MarkerOptions()
                         .position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng))
                         .title(results.routes[0].legs[0].endAddress)
+                        .snippet(getEndLocationTitle(results))
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                 break;
             case "Rose":
                 destination = new MarkerOptions()
                         .position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng))
                         .title(results.routes[0].legs[0].endAddress)
+                        .snippet(getEndLocationTitle(results))
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
                 break;
             case "Violet":
                 destination = new MarkerOptions()
                         .position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng))
                         .title(results.routes[0].legs[0].endAddress)
+                        .snippet(getEndLocationTitle(results))
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
                 break;
             case "Yellow":
                 destination = new MarkerOptions()
                         .position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng))
                         .title(results.routes[0].legs[0].endAddress)
+                        .snippet(getEndLocationTitle(results))
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
                 break;
         }
@@ -673,7 +690,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         markers.add(mMap.addMarker(origin));
         markers.add(mMap.addMarker(destination));
-    }*/
+    }
 
     private String getEndLocationTitle(DirectionsResult results){
         return  "Time :"+ results.routes[0].legs[0].duration.humanReadable + " Distance :" + results.routes[0].legs[0].distance.humanReadable;
