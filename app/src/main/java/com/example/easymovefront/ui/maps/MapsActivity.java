@@ -172,8 +172,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         finish();
                         return true;
                     case R.id.settings:
-                        Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
-                        startActivity(intent);
+                        drawerHeader.setVisibility(View.GONE);
+                        loadingDrawer.setVisibility(View.VISIBLE);
+                        Intent settingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);
+                        startActivity(settingsIntent);
+                        finish();
                         return true;
                     default:
                         return false;

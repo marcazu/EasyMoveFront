@@ -117,7 +117,7 @@ public class RankingActivity extends AppCompatActivity  {
         dLayout.addDrawerListener(mDrawerToggle);
         NavigationView navView = (NavigationView) findViewById(R.id.navigationProfile); // initiate a Navigation View
         // implement setNavigationItemSelectedListener event on NavigationView
-        navView.getMenu().getItem(1).setChecked(true);
+        navView.getMenu().getItem(2).setChecked(true);
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -145,13 +145,11 @@ public class RankingActivity extends AppCompatActivity  {
                     case R.id.ranking:
                         return true;
                     case R.id.settings:
-                        text = "SETTINGS PLACEHOLDER";
-                        duration = Toast.LENGTH_LONG;
-                        Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
-                        startActivity(intent);
-
-                        toast = Toast.makeText(getApplicationContext(), text, duration);
-                        toast.show();
+                        drawerHeader.setVisibility(View.GONE);
+                        loadingDrawer.setVisibility(View.VISIBLE);
+                        Intent settingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);
+                        startActivity(settingsIntent);
+                        finish();
                         return true;
                     default:
                         return false;
