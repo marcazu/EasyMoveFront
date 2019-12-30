@@ -532,6 +532,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void addMarkersToMap(DirectionsResult results, GoogleMap mMap) {
+        markers.add(mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].startLocation.lat,results.routes[0].legs[0].startLocation.lng)).title(results.routes[0].legs[0].startAddress)));
+        markers.add(mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng)).title(results.routes[0].legs[0].endAddress).snippet(getEndLocationTitle(results))));
+    }
+
+    /*private void addMarkersToMap(DirectionsResult results, GoogleMap mMap) {
 
         String orgColor = mSharedPreference.getString("origin_color","");
         String dstColor = mSharedPreference.getString("destination_color","");
@@ -668,7 +673,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         markers.add(mMap.addMarker(origin));
         markers.add(mMap.addMarker(destination));
-    }
+    }*/
 
     private String getEndLocationTitle(DirectionsResult results){
         return  "Time :"+ results.routes[0].legs[0].duration.humanReadable + " Distance :" + results.routes[0].legs[0].distance.humanReadable;
