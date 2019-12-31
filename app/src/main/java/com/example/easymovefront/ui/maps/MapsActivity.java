@@ -277,12 +277,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 //Similarly you can extract for other fields.
                 LatLng loc = new LatLng(lat, lon);
 
+                Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(),getResources().getIdentifier("pin_obstacle", "drawable", getPackageName()));
+                Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, 140, 140, false);
 
                 Marker mark = mMap.addMarker(new MarkerOptions()
                         .position(loc)
                         .title(title)
                         .snippet(desc)
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                        .icon(BitmapDescriptorFactory.fromBitmap(resizedBitmap)));
+
                 ObstacleMap.getInstance().addMarker(mark, dataObj);
             }
         } catch (ExecutionException e) {
@@ -414,12 +417,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 else {
                     //IMPLEMENTAR AMB DIRECCIO
                 }
+
+                Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(),getResources().getIdentifier("pin_obstacle", "drawable", getPackageName()));
+                Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, 140, 140, false);
+
                 Marker mark = mMap.addMarker(new MarkerOptions()
                         .position(loc)
                         .title(title)
                         .snippet(desc)
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
-//                BitmapDescriptorFactory.fromResource(R.drawable.pin_obstacle)
+                        .icon(BitmapDescriptorFactory.fromBitmap(resizedBitmap)));
+
                 addMarkerToBack(desc, loc.latitude, loc.longitude, title, mark);
 
             }
