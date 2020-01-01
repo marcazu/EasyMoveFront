@@ -8,7 +8,9 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
@@ -20,6 +22,7 @@ import android.widget.Toast;
 import com.example.easymovefront.R;
 import com.example.easymovefront.data.model.LoggedUser;
 import com.example.easymovefront.network.DeleteUserTask;
+import com.example.easymovefront.ui.maps.RouteDialogFragment;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -74,7 +77,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        preferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        /*preferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 
@@ -98,7 +101,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
                 }
             }
-        };
+        };*/
 
     }
 
@@ -164,13 +167,23 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                 Toast.makeText(getContext(), "Inside", Toast.LENGTH_SHORT).show();
                             }
                         });
-                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                     }
                 });
                 builder.show();
                 Toast.makeText(getContext(), "Clicked", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
+
+        Preference feedBackPreference = findPreference("feedback");
+        feedBackPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                DialogFragment newFragment = new FeedbackDialogFragment(getActivity());
+                newFragment.show(getActivity().getSupportFragmentManager(), "kik");
                 return true;
             }
         });
@@ -205,6 +218,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         mListener = null;
     }
 
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -220,6 +234,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+
+
 
 
 }

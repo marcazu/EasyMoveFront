@@ -28,7 +28,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 
-public class SettingsActivity extends AppCompatActivity implements SettingsFragment.OnFragmentInteractionListener {
+import javax.mail.MessagingException;
+
+public class SettingsActivity extends AppCompatActivity implements SettingsFragment.OnFragmentInteractionListener, FeedbackDialogFragment.OnFragmentInteractionListener {
 
 
     private SettingsFragment mSettingsFragment;
@@ -166,5 +168,14 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
     @Override
     public void onBackPressed() {
         if (!dLayout.isDrawerOpen(GravityCompat.START)) dLayout.openDrawer(GravityCompat.START);
+    }
+
+    @Override
+    public void onOkPressed(String body) {
+        try {
+            SendEmail.generateAndSendEmail(body);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
     }
 }
