@@ -2,6 +2,7 @@ package com.example.easymovefront.ui.settings;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -182,11 +183,19 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         feedBackPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                DialogFragment newFragment = new FeedbackDialogFragment(getActivity());
-                newFragment.show(getActivity().getSupportFragmentManager(), "kik");
+                sendEmail();
                 return true;
             }
         });
+    }
+
+    private void sendEmail() {
+        Intent mailIntent = new Intent(Intent.ACTION_VIEW);
+        Uri data = Uri.parse("mailto:?subject=" + "Feedback"+ "&body=" + "<i><b>Please, <br>" +
+                "delete these lines and explain your issue or bug.</i></b>"
+                + "&to=" + "adem998@gmail.com");
+        mailIntent.setData(data);
+        startActivity(Intent.createChooser(mailIntent, "Send mail..."));
     }
 
     @Override
