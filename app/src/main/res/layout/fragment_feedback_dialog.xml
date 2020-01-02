@@ -9,7 +9,7 @@
 
     <EditText
         android:id="@+id/body_mail"
-        android:inputType="text"
+        android:inputType="textMultiLine"
         android:hint="Please explain your issue or bug"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

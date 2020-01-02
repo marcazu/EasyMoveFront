@@ -59,6 +59,9 @@ dependencies {
     implementation 'com.github.jd-alexander:LikeButton:0.2.3'
     //settings
     implementation 'com.android.support:preference-v7:26.1.0'
+    //mail sending
+    implementation files('gradle/activation.jar')
+    implementation files('gradle/mail.jar')
 }
 
 apply plugin: 'com.google.gms.google-services'
