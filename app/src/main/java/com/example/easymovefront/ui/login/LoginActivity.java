@@ -63,6 +63,7 @@ public class LoginActivity extends AppCompatActivity {
         if (mUserAccount.getmUserAccount() != null) {
             pref = PreferenceManager.getDefaultSharedPreferences(this);
             LoggedUser.getInstance().setId(pref.getString("id", "n/a"));
+            LoggedUser.getInstance().setToken(pref.getString("token", "n/a"));
             updateUI();
             try {
                 updateBackend(mUserAccount);
@@ -179,6 +180,7 @@ public class LoginActivity extends AppCompatActivity {
             pref = PreferenceManager.getDefaultSharedPreferences(this);
             SharedPreferences.Editor edit = pref.edit();
             edit.putString("id", LoggedUser.getInstance().getId());
+            edit.putString("token", LoggedUser.getInstance().getToken());
             edit.apply();
             launchMaps();
         } catch (Exception e) {
