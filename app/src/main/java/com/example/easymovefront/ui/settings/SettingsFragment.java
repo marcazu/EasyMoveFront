@@ -193,7 +193,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         Intent mailIntent = new Intent(Intent.ACTION_VIEW);
         Uri data = Uri.parse("mailto:?subject=" + "Feedback"+ "&body=" + "<i><b>Please, <br>" +
                 "delete these lines and explain your issue or bug.</i></b>"
-                + "&to=" + "adem998@gmail.com");
+                + "&to=" + "easymovapp@gmail.com");
         mailIntent.setData(data);
         startActivity(Intent.createChooser(mailIntent, "Send mail..."));
     }
