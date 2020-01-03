@@ -536,6 +536,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 DirectionsResult result;
                 result = DirectionsApi.newRequest(getGeoContext())
                         .mode(TravelMode.WALKING).origin(og)
+                        .alternatives(true)
                         .destination(dest).departureTime(now)
                         .await();
                 mGeneratedRoute = true;
@@ -729,8 +730,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void addPolyline(DirectionsResult results, GoogleMap mMap) {
-        List<LatLng> decodedPath = PolyUtil.decode(results.routes[0].overviewPolyline.getEncodedPath());
-        polylines.add(mMap.addPolyline(new PolylineOptions().addAll(decodedPath)));
+        ArrayList<Integer> colors = new ArrayList<>();
+        colors.add(0xff000000); //black
+        colors.add(0xff0000ff); //blue
+        colors.add(0xff888888); //gray
+        colors.add(0xffff0000); //red
+        for (int i = 0; i < results.routes.length; ++i ) {
+            List<LatLng> decodedPath = PolyUtil.decode(results.routes[i].overviewPolyline.getEncodedPath());
+            polylines.add(mMap.addPolyline(new PolylineOptions().color(colors.get(i)).addAll(decodedPath)));
+        }
     }
 
     public static Bitmap StringToBitMap(String image){
