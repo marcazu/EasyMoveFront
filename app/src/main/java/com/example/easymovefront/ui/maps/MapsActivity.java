@@ -537,9 +537,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 result = DirectionsApi.newRequest(getGeoContext())
                         .mode(TravelMode.WALKING).origin(og)
                         .alternatives(true)
+                        .language("ca")
                         .destination(dest).departureTime(now)
                         .await();
                 mGeneratedRoute = true;
+                
                 formStepByStepRoute(result);
                 addMarkersToMap(result, mMap);
                 addPolyline(result, mMap);
@@ -733,8 +735,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         ArrayList<Integer> colors = new ArrayList<>();
         colors.add(0xff000000); //black
         colors.add(0xff0000ff); //blue
-        colors.add(0xff888888); //gray
         colors.add(0xffff0000); //red
+        colors.add(0xff888888); //gray
+        colors.add(0xff00ff00); //green
+        colors.add(0xffff00ff); //magenta
+        colors.add(0xffffff00); //yellow
         for (int i = 0; i < results.routes.length; ++i ) {
             List<LatLng> decodedPath = PolyUtil.decode(results.routes[i].overviewPolyline.getEncodedPath());
             polylines.add(mMap.addPolyline(new PolylineOptions().color(colors.get(i)).addAll(decodedPath)));
@@ -789,6 +794,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void formStepByStepRoute(DirectionsResult result) {
         steps = new ArrayList<>();
         for (int i = 0; i < result.routes.length; ++i) {
+            steps.add ("RUTA "+ (i+1));
             for (int j = 0; j < result.routes[i].legs.length; ++j) {
                 for (int k = 0; k < result.routes[i].legs[j].steps.length; ++k) {
                     String html_steps = result.routes[i].legs[j].steps[k].htmlInstructions;
