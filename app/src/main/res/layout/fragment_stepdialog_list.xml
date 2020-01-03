@@ -8,6 +8,7 @@
     android:layout_height="match_parent"
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
+    android:background="@color/colorWhite"
     app:layoutManager="LinearLayoutManager"
     tools:context=".ui.maps.StepDialogFragment"
     tools:listitem="@layout/fragment_stepdialog" />
