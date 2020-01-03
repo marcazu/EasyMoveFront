@@ -113,7 +113,7 @@ public class ProfileActivity extends AppCompatActivity {
         try {
             String s = puntstask.get();
             JSONObject json = new JSONObject(s);
-            punts.setText("Score: " + json.getString("puntuacio"));
+            punts.setText(json.getString("puntuacio"));
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
