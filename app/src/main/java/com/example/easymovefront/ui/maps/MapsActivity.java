@@ -98,8 +98,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     List<Polyline> polylines = new ArrayList<Polyline>();
     List<Marker> markers = new ArrayList<Marker>();
-    ArrayList<String> steps = new ArrayList<>();
+    ArrayList<String> steps;
     private Fragment newFragment3;
+    private boolean inStepDialogFragment;
 
 
     @Override
@@ -216,12 +217,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return true;
             case R.id.nextStep:
                 if (mGeneratedRoute) {
+                    inStepDialogFragment = true;
                     newFragment3 = new StepDialogFragment(this, steps);
                     FragmentManager manager = getSupportFragmentManager();
                     FragmentTransaction ft = manager.beginTransaction();
                     ft.replace(R.id.drawer_layout, newFragment3);
                     //ft.add(newFragment3, null);
-                    ft.commit();
+                    ft.addToBackStack(null).commit();
                 }
                 else  {
                     toast = Toast.makeText(this, "Please generate a route" , Toast.LENGTH_LONG);
@@ -763,10 +765,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onBackPressed() {
-        if (!dLayout.isDrawerOpen(GravityCompat.START)) dLayout.openDrawer(GravityCompat.START);
+        if (inStepDialogFragment) {
+            android.app.FragmentManager fm = getFragmentManager();
+            if (fm.getBackStackEntryCount() > 0) {
+                fm.popBackStack();
+            } else {
+                super.onBackPressed();
+            }
+            inStepDialogFragment = false;
+        }
+        else if (!dLayout.isDrawerOpen(GravityCompat.START)) dLayout.openDrawer(GravityCompat.START);
     }
 
     private void formStepByStepRoute(DirectionsResult result) {
+        steps = new ArrayList<>();
         for (int i = 0; i < result.routes.length; ++i) {
             for (int j = 0; j < result.routes[i].legs.length; ++j) {
                 for (int k = 0; k < result.routes[i].legs[j].steps.length; ++k) {
