@@ -1,15 +1,5 @@
 package com.example.easymovefront.ui.maps;
 
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.DialogFragment;
-import androidx.preference.PreferenceManager;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -22,6 +12,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -67,7 +58,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -77,7 +67,19 @@ import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener, RouteDialogFragment.OnFragmentInteractionListener, ObstacleDialogFragment.OnFragmentInteractionListener {
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener, RouteDialogFragment.OnFragmentInteractionListener, ObstacleDialogFragment.OnFragmentInteractionListener, StepDialogFragment.OnListFragmentInteractionListener {
 
     private GoogleMap mMap;
     private LocationManager mLocationManager;
@@ -91,10 +93,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ProgressBar loadingDrawer;
     private ImageView drawerHeader;
     private SharedPreferences mSharedPreference;
+    private boolean mGeneratedRoute;
     DrawerLayout dLayout;
 
     List<Polyline> polylines = new ArrayList<Polyline>();
     List<Marker> markers = new ArrayList<Marker>();
+    ArrayList<String> steps = new ArrayList<>();
+    private Fragment newFragment3;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +112,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         //getting the toolbar
-
+        mGeneratedRoute = false;
+        System.out.println(mGeneratedRoute);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mloadingBar = findViewById(R.id.loadingMaps);
 
@@ -207,12 +214,25 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 DialogFragment newFragment2 = new ObstacleDialogFragment(this);
                 newFragment2.show(getSupportFragmentManager(), "kok");
                 return true;
+            case R.id.nextStep:
+                if (mGeneratedRoute) {
+                    newFragment3 = new StepDialogFragment(this, steps);
+                    FragmentManager manager = getSupportFragmentManager();
+                    FragmentTransaction ft = manager.beginTransaction();
+                    ft.replace(R.id.drawer_layout, newFragment3);
+                    //ft.add(newFragment3, null);
+                    ft.commit();
+                }
+                else  {
+                    toast = Toast.makeText(this, "Please generate a route" , Toast.LENGTH_LONG);
+                    toast.show();
+                }
+                return true;
+                //newFragment3.get
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
-
-
 
 
     /**
@@ -515,7 +535,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         .mode(TravelMode.WALKING).origin(og)
                         .destination(dest).departureTime(now)
                         .await();
-
+                mGeneratedRoute = true;
+                formStepByStepRoute(result);
                 addMarkersToMap(result, mMap);
                 addPolyline(result, mMap);
             }
@@ -744,4 +765,33 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onBackPressed() {
         if (!dLayout.isDrawerOpen(GravityCompat.START)) dLayout.openDrawer(GravityCompat.START);
     }
+
+    private void formStepByStepRoute(DirectionsResult result) {
+        for (int i = 0; i < result.routes.length; ++i) {
+            for (int j = 0; j < result.routes[i].legs.length; ++j) {
+                for (int k = 0; k < result.routes[i].legs[j].steps.length; ++k) {
+                    String html_steps = result.routes[i].legs[j].steps[k].htmlInstructions;
+                    String plain_text_steps  = html_steps.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", " ");
+                    steps.add(plain_text_steps);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onListFragmentInteraction(String mItem) {
+
+    }
+
+    /*
+    @Override
+    public void onListFragmentInteraction(String mItem) {
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction ft = manager.beginTransaction();
+        ft.replace(R.id.fragment_container, newFragment3);
+        ft.add(newFragment3, null);
+        ft.commit();
+
+
+    } */
 }
