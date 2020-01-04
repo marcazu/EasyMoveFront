@@ -93,7 +93,7 @@ public class ObstacleDialogFragment extends DialogFragment {
                 .setPositiveButton(R.string.okButton, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        EditText loc = editTextView.findViewById(R.id.location);
+                        //EditText loc = editTextView.findViewById(R.id.location);
                         EditText desc = editTextView.findViewById(R.id.description);
                         EditText photo = null; //editTextView.findViewById(R.id.photo);
                         EditText tit = editTextView.findViewById(R.id.title);

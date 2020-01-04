@@ -3,7 +3,7 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <EditText
+    <!--<EditText
         android:id="@+id/location"
         android:inputType="textPostalAddress"
         android:layout_width="match_parent"
@@ -12,7 +12,7 @@
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
         android:layout_marginBottom="4dp"
-        android:hint="Location (Empty for current location)"/>
+        android:hint="Location (Empty for current location)"/>-->
 
     <EditText
         android:id="@+id/title"
@@ -23,7 +23,6 @@
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
         android:layout_marginBottom="4dp"
-        android:layout_below="@id/location"
         android:hint="Title*"/>
 
     <EditText
