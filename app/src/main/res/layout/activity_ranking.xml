@@ -13,13 +13,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbarRanking"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:background="@color/colorBlue"
-        />
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbarRanking"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:background="@color/colorBlue"
+            />
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
