@@ -114,7 +114,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         //getting the toolbar
         mGeneratedRoute = false;
-        System.out.println(mGeneratedRoute);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mloadingBar = findViewById(R.id.loadingMaps);
 
