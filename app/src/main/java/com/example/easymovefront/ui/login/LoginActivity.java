@@ -119,7 +119,7 @@ public class LoginActivity extends AppCompatActivity {
             final SignInButton googleButton = findViewById(R.id.sign_in_button);
             googleButton.setVisibility(View.GONE);
             final Button signOutButton = findViewById(R.id.signOut_button);
-            signOutButton.setVisibility(View.VISIBLE);
+            signOutButton.setVisibility(View.GONE);
             setResult(Activity.RESULT_OK);
             CharSequence text = "Welcome";
             int duration = Toast.LENGTH_LONG;
