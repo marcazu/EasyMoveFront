@@ -51,6 +51,7 @@ import com.google.maps.GeoApiContext;
 import com.google.maps.android.PolyUtil;
 import com.google.maps.errors.ApiException;
 import com.google.maps.model.DirectionsResult;
+import com.google.maps.model.DirectionsRoute;
 import com.google.maps.model.TravelMode;
 
 import org.joda.time.DateTime;
@@ -61,9 +62,14 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.StringJoiner;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -97,10 +103,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     DrawerLayout dLayout;
 
     List<Polyline> polylines = new ArrayList<Polyline>();
-    List<Marker> markers = new ArrayList<Marker>();
+    ArrayList <Marker> markers = new ArrayList<Marker>();
     ArrayList<String> steps;
+    Set <Marker> obstacles = new HashSet<Marker>();
     private Fragment newFragment3;
     private boolean inStepDialogFragment;
+    private ArrayList<Integer> obstructedRoutes = new ArrayList<Integer>();
 
 
     @Override
@@ -479,12 +487,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         polylines.clear();
 
+
         for(Marker mark : markers)
         {
             mark.remove();
         }
 
         markers.clear();
+
+
     }
 
     private void createRoute(String inputSource, String inputDest) {
@@ -541,7 +552,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         .destination(dest).departureTime(now)
                         .await();
                 mGeneratedRoute = true;
-                
+                selectRoutesWithoutObstacles(result);
                 formStepByStepRoute(result);
                 addMarkersToMap(result, mMap);
                 addPolyline(result, mMap);
@@ -555,6 +566,39 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    private void selectRoutesWithoutObstacles(DirectionsResult result) {
+        obstacles =  ObstacleMap.getInstance().getMap().keySet();
+        for (int i = 0; i < result.routes.length; ++i) {
+            if (obstacleInRange(result.routes[i]))
+                obstructedRoutes.add(i);
+        }
+    }
+
+    private boolean obstacleInRange(DirectionsRoute route) { //mirar si la ruta té un obstacle en un rang proper en qualsevol dels seus punts
+        List<LatLng> decodedPath = PolyUtil.decode(route.overviewPolyline.getEncodedPath());
+        final double RANG_CONSTANT_LAT = 1; //0.00001;
+        final double RANG_CONSTANT_LONG = 1;  //0.001;
+        Iterator<Marker> iterator = obstacles.iterator();
+        while (iterator.hasNext()) {
+            Marker marker = iterator.next();
+            double latObstacle = marker.getPosition().latitude;
+            double longObstacle = marker.getPosition().longitude;
+            System.out.println("Latitud obstacle "+ latObstacle);
+            for (int j = 0; j < decodedPath.size(); ++j) {
+                double latPuntRuta = decodedPath.get(j).latitude;
+                double longPuntRuta = decodedPath.get(j).longitude;
+                System.out.println("Latitud punt ruta "+ latPuntRuta);
+                if ((latPuntRuta + RANG_CONSTANT_LAT >= latObstacle &&
+                        latPuntRuta - RANG_CONSTANT_LAT <= latObstacle) &&
+                        (longPuntRuta + RANG_CONSTANT_LONG >= longObstacle &&
+                                longPuntRuta - RANG_CONSTANT_LONG <= longObstacle)
+                    ) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
 
     private GeoApiContext getGeoContext() {
@@ -722,7 +766,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 break;
         }
 
-
         markers.add(mMap.addMarker(origin));
         markers.add(mMap.addMarker(destination));
     }
@@ -733,6 +776,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void addPolyline(DirectionsResult results, GoogleMap mMap) {
         ArrayList<Integer> colors = new ArrayList<>();
+        obstructedRoutes = new ArrayList<>();
         colors.add(0xff000000); //black
         colors.add(0xff0000ff); //blue
         colors.add(0xffff0000); //red
@@ -741,8 +785,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         colors.add(0xffff00ff); //magenta
         colors.add(0xffffff00); //yellow
         for (int i = 0; i < results.routes.length; ++i ) {
-            List<LatLng> decodedPath = PolyUtil.decode(results.routes[i].overviewPolyline.getEncodedPath());
-            polylines.add(mMap.addPolyline(new PolylineOptions().color(colors.get(i)).addAll(decodedPath)));
+            if (!obstructedRoutes.contains(i)) {
+                List<LatLng> decodedPath = PolyUtil.decode(results.routes[i].overviewPolyline.getEncodedPath());
+                polylines.add(mMap.addPolyline(new PolylineOptions().color(colors.get(i)).addAll(decodedPath)));
+            }
         }
     }
 
