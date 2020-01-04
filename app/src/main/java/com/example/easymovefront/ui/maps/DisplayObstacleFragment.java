@@ -179,6 +179,7 @@ public class DisplayObstacleFragment extends DialogFragment implements AsyncResp
             @Override
             public void unLiked(LikeButton likeButton) {
                 if (!isEditFinish) {
+                    buttonCam.setVisibility(View.GONE);
                     obstacleLoading.setVisibility(View.VISIBLE);
                     isEditFinish = true;
                     updateObstacleBackend();

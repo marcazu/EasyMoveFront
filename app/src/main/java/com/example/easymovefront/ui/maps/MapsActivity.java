@@ -1,5 +1,6 @@
 package com.example.easymovefront.ui.maps;
 
+import android.content.ClipData;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -94,6 +95,7 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
     private ImageView drawerHeader;
     private SharedPreferences mSharedPreference;
     private boolean mGeneratedRoute;
+    private MenuItem nextStep;
     DrawerLayout dLayout;
     private Marker currentMarker;
 
@@ -117,7 +119,6 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
         mGeneratedRoute = false;
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mloadingBar = findViewById(R.id.loadingMaps);
-
         //setting the title
         mToolbar.setTitle("");
         setSupportActionBar(mToolbar);
@@ -131,6 +132,7 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
 
         mSharedPreference = PreferenceManager
                         .getDefaultSharedPreferences(this);
+
     }
 
 
@@ -197,6 +199,8 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_mapsactivity, menu);
+        nextStep = menu.getItem(2);
+        nextStep.setVisible(false);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -548,6 +552,7 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
                 formStepByStepRoute(result);
                 addMarkersToMap(result, mMap);
                 addPolyline(result, mMap);
+                nextStep.setVisible(true);
             }
         } catch (ApiException e) {
             e.printStackTrace();
