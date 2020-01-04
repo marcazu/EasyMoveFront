@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.example.easymovefront.data.model.CurrentBitmap;
 import com.example.easymovefront.data.model.LoggedUser;
+import com.example.easymovefront.ui.maps.AsyncResponse;
 import com.example.easymovefront.ui.maps.MapsActivity;
 
 import org.json.JSONException;
@@ -37,6 +38,7 @@ public class UpdateMarkerTask extends AsyncTask<String, Void, JSONObject>
 
     public static int returnCode = -1;
     public static String mResponse;
+    public AsyncResponse asyncResponse = null;
 
     public UpdateMarkerTask (Context context){
         mContext = context;
@@ -157,6 +159,7 @@ public class UpdateMarkerTask extends AsyncTask<String, Void, JSONObject>
 
     @Override
     protected void onPostExecute(JSONObject result) {
+        asyncResponse.processFinish(String.valueOf(returnCode));
         CharSequence text = String.valueOf(returnCode);
         int duration = Toast.LENGTH_LONG;
 

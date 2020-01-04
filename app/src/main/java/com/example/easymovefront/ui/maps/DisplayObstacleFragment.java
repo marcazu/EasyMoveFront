@@ -52,7 +52,7 @@ import java.util.concurrent.ExecutionException;
 
 import static android.app.Activity.RESULT_OK;
 
-public class DisplayObstacleFragment extends DialogFragment {
+public class DisplayObstacleFragment extends DialogFragment implements AsyncResponse {
 
     private JSONObject json;
     private String mId;
@@ -70,6 +70,7 @@ public class DisplayObstacleFragment extends DialogFragment {
     private String photoUrl;
 
     private ProgressBar mapsLoading;
+    private ProgressBar obstacleLoading;
 
     private ImageView pic;
     private ImageView editpic;
@@ -78,6 +79,8 @@ public class DisplayObstacleFragment extends DialogFragment {
     private Button buttonCam;
     private EditText editTitle;
     private EditText editDesc;
+
+    private Boolean isEditFinish = false;
 
     private Boolean isCameraEnabled = true;
     private Bitmap mPicture = null;
@@ -107,6 +110,7 @@ public class DisplayObstacleFragment extends DialogFragment {
         mDislike = editTextView.findViewById(R.id.dislikeButton);
         mResolved = editTextView.findViewById(R.id.resolvedObstacleButton);
         mEdit = editTextView.findViewById(R.id.editObstacleButton);
+        obstacleLoading = editTextView.findViewById(R.id.loadingDisplayObstacle);
         updateEditButton();
         updateLikeStatus();
         mLike.setOnLikeListener(new OnLikeListener() {
@@ -168,27 +172,17 @@ public class DisplayObstacleFragment extends DialogFragment {
         mEdit.setOnLikeListener(new OnLikeListener() {
             @Override
             public void liked(LikeButton likeButton) {
+                isEditFinish = false;
                 editObstacle(editTextView);
             }
 
             @Override
             public void unLiked(LikeButton likeButton) {
-                updateObstacleBackend();
-                editTitle.setVisibility(View.GONE);
-                editDesc.setVisibility(View.GONE);
-                buttonCam.setVisibility(View.GONE);
-                title.setVisibility(View.VISIBLE);
-                desc.setVisibility(View.VISIBLE);
-                mLike.setVisibility(View.VISIBLE);
-                mLikenumber.setVisibility(View.VISIBLE);
-                mDislike.setVisibility(View.VISIBLE);
-                mDislikenumber.setVisibility(View.VISIBLE);
-                mResolved.setVisibility(View.VISIBLE);
-                if (pic != null) {
-                    pic.setVisibility(View.VISIBLE);
-                    editpic.setVisibility(View.GONE);
+                if (!isEditFinish) {
+                    obstacleLoading.setVisibility(View.VISIBLE);
+                    isEditFinish = true;
+                    updateObstacleBackend();
                 }
-
             }
         });
         CreateImageFromUrlTask pictask = new CreateImageFromUrlTask(mContext);
@@ -218,6 +212,30 @@ public class DisplayObstacleFragment extends DialogFragment {
         return builder.create();
     }
 
+    @Override
+    public void processFinish(String output) {
+        editTitle.setVisibility(View.GONE);
+        editDesc.setVisibility(View.GONE);
+        buttonCam.setVisibility(View.GONE);
+        title.setVisibility(View.VISIBLE);
+        desc.setVisibility(View.VISIBLE);
+        mLike.setVisibility(View.VISIBLE);
+        mLikenumber.setVisibility(View.VISIBLE);
+        mDislike.setVisibility(View.VISIBLE);
+        mDislikenumber.setVisibility(View.VISIBLE);
+        mResolved.setVisibility(View.VISIBLE);
+        if (pic != null) {
+            pic.setVisibility(View.VISIBLE);
+            editpic.setVisibility(View.GONE);
+        }
+        obstacleLoading.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void processFinish(JSONObject output) {
+
+    }
+
     private void updateObstacleBackend() {
         String picUrl = photoUrl;
         if (mPicture != null) {
@@ -225,6 +243,7 @@ public class DisplayObstacleFragment extends DialogFragment {
             picUrl = "0";
         }
         UpdateMarkerTask myTask = new UpdateMarkerTask(mContext);
+        myTask.asyncResponse = this;
         String editdesc = editDesc.getText().toString();
         String edittitle = editTitle.getText().toString();
         if (editdesc.equals("")) editdesc = desc.getText().toString();
@@ -232,13 +251,6 @@ public class DisplayObstacleFragment extends DialogFragment {
         if (edittitle.equals("")) edittitle = title.getText().toString();
         else title.setText(edittitle);
         myTask.execute(editdesc, edittitle, mId, mIdCreador, String.valueOf(mMarker.getPosition().latitude), String.valueOf(mMarker.getPosition().longitude), picUrl);
-        try {
-            JSONObject obj = myTask.get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     private void editObstacle(View v) {

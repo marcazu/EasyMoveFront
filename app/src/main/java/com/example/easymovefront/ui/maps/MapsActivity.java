@@ -79,7 +79,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener, RouteDialogFragment.OnFragmentInteractionListener, ObstacleDialogFragment.OnFragmentInteractionListener, StepDialogFragment.OnListFragmentInteractionListener {
+public class MapsActivity extends AppCompatActivity implements AsyncResponse, OnMapReadyCallback, LocationListener, RouteDialogFragment.OnFragmentInteractionListener, ObstacleDialogFragment.OnFragmentInteractionListener, StepDialogFragment.OnListFragmentInteractionListener {
 
     private GoogleMap mMap;
     private LocationManager mLocationManager;
@@ -95,6 +95,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private SharedPreferences mSharedPreference;
     private boolean mGeneratedRoute;
     DrawerLayout dLayout;
+    private Marker currentMarker;
 
     List<Polyline> polylines = new ArrayList<Polyline>();
     List<Marker> markers = new ArrayList<Marker>();
@@ -459,15 +460,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void addMarkerToBack(String desc, double latitude, double longitude, String title, Marker mark){
         CreateMarkerTask myTask = new CreateMarkerTask(getApplicationContext());
+        currentMarker = mark;
+        mloadingBar.setVisibility(View.VISIBLE);
+        myTask.asyncResponse = this;
         myTask.execute(desc, LoggedUser.getInstance().getId(), String.valueOf(latitude), String.valueOf(longitude), title);
-        try {
-            JSONObject obj = myTask.get();
-            ObstacleMap.getInstance().addMarker(mark, obj);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    }
+
+    @Override
+    public void processFinish(JSONObject output) {
+        ObstacleMap.getInstance().addMarker(currentMarker, output);
+        mloadingBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void processFinish(String output) {
     }
 
     private void clearMap() {

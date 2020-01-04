@@ -80,6 +80,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
+            <ProgressBar
+                android:id="@+id/loadingDisplayObstacle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+
             <TextView
                 android:id="@+id/likenumber"
                 android:layout_width="wrap_content"
