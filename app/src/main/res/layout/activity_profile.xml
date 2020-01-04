@@ -12,7 +12,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp">
+        android:layout_height="200dp"
+        android:background="@color/colorWhite">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbarProfile"
@@ -30,10 +31,10 @@
             android:background="@drawable/gradientbackground"
             android:orientation="vertical">
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/pictureProfile"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
+                android:layout_width="106dp"
+                android:layout_height="106dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="30dp" />
 
