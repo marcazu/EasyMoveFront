@@ -14,6 +14,11 @@
             android:id="@+id/obstacleView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+        <ImageView
+            android:id="@+id/editphotoView"
+            android:layout_width="wrap_content"
+            android:layout_height="600dp"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/titleObstacle"
@@ -26,6 +31,50 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/Edittitle"
+                    android:inputType="text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:visibility="gone"
+                    android:hint="Title"/>
+
+                <EditText
+                    android:id="@+id/Editdescription"
+                    android:inputType="text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:layout_below="@id/Edittitle"
+                    android:visibility="gone"
+                    android:hint="Description"/>
+
+                <Button
+                    android:id="@+id/Editpic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:visibility="gone"
+                    android:layout_below="@id/Editdescription"
+                    android:text="CHANGE PHOTO" />
+
+
+
+
+        </RelativeLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
