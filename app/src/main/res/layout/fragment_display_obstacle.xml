@@ -4,12 +4,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="5dp"
-    android:fillViewport="false">
+    android:fillViewport="false"
+    android:background="@color/colorGrayLightTransparent"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/colorGrayLightTransparent">
+
+        <TextView
+            android:id="@+id/titleObstacle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_gravity="center"
+            android:textAllCaps="true"
+            android:textStyle="bold"
+            />
+
         <ImageView
             android:id="@+id/obstacleView"
             android:layout_width="wrap_content"
@@ -21,16 +35,10 @@
             android:visibility="gone"/>
 
         <TextView
-            android:id="@+id/titleObstacle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <TextView
             android:id="@+id/descriptionObstacle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -92,7 +100,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toTopOf="@id/likeButton"
-
                  />
 
             <com.like.LikeButton
