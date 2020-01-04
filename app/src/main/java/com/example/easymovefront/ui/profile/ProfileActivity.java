@@ -35,6 +35,7 @@ import com.google.android.material.navigation.NavigationView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -96,7 +97,11 @@ public class ProfileActivity extends AppCompatActivity {
         ImageView pic = findViewById(R.id.pictureProfile);
         TextView name = findViewById(R.id.nameProfile);
         TextView punts = findViewById(R.id.pointsUser);
+        TextView obs = findViewById(R.id.obstaclesUser);
+        TextView mail = findViewById(R.id.userMail);
+
         name.setText(LoggedUser.getInstance().getmUserAccount().getDisplayName());
+        mail.setText(LoggedUser.getInstance().getmUserAccount().getEmail());
         Drawable d;
         CreateImageFromUrlTask pictask = new CreateImageFromUrlTask(getApplicationContext());
         pictask.execute(LoggedUser.getInstance().getmUserAccount().getPhotoUrl().toString());
@@ -113,7 +118,17 @@ public class ProfileActivity extends AppCompatActivity {
         try {
             String s = puntstask.get();
             JSONObject json = new JSONObject(s);
-            punts.setText("Score: " + json.getString("puntuacio"));
+            punts.setText(json.getString("puntuacio"));
+            Object n = json.get("obstaclesIds");
+            String obstacle = n.toString();
+            char[] obstacles = obstacle.toCharArray();
+            int count = 1;
+            for (char o : obstacles) {
+                if (o == ',') count++;
+            }
+            obs.setText(String.valueOf(count));
+
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {

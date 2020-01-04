@@ -58,9 +58,15 @@ dependencies {
     //Buttons
     implementation 'com.github.jd-alexander:LikeButton:0.2.3'
     //settings
+    //noinspection GradleCompatible
     implementation 'com.android.support:preference-v7:26.1.0'
 
+    //Cardview profile
+    //noinspection GradleCompatible
+    implementation 'com.android.support:cardview-v7:28.0.0'
 
+    //round profile
+    implementation 'de.hdodenhof:circleimageview:1.2.1'
 
 }
 
