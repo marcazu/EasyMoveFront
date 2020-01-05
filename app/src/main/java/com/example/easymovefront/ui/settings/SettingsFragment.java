@@ -32,19 +32,16 @@ import com.google.android.gms.tasks.Task;
 
 /**
  * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link SettingsFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link SettingsFragment# newInstance} factory method to
- * create an instance of this fragment.
+ * It contains all preferences of the app
  */
 public class SettingsFragment extends PreferenceFragmentCompat {
 
     private OnFragmentInteractionListener mListener;
     private Context mContext;
+    private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
     public static final String PREF_REMOVE_ACCOUNT = "removeAccount";
-    public static final String PREF_ORIGIN_COLOR = "origin_color";
-    public static final String PREF_DESTINATION_COLOR = "destination_color";
+    public static final String PREF_FEEDBACK = "feedback";
+
 
     public SettingsFragment(){}
 
@@ -53,61 +50,17 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     }
 
 
-    private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
-
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @ param param1 Parameter 1.
-     * @ param param2 Parameter 2.
-     * @return A new instance of fragment SettingsFragment.
-
-    // TODO: Rename and change types and number of parameters
-    public static SettingsFragment newInstance(String param1, String param2) {
-        SettingsFragment fragment = new SettingsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }*/
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        /*preferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-
-                if (key.equals(PREF_REMOVE_ACCOUNT)) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    builder.setCancelable(true);
-                    builder.setTitle("Title");
-                    builder.setMessage("Message");
-                    builder.setPositiveButton("Confirm",
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    deleteUser();
-                                }
-                            });
-                    builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    });
-
-                }
-            }
-        };*/
-
     }
 
 
-
+    /**
+     * Prepares for deleting the logged user.
+     * It delegates the task to signOut
+     * @see #signOut(GoogleSignInClient)
+     */
     private void deleteUser() {
         DeleteUserTask myTask = new DeleteUserTask(getContext());
         myTask.execute(LoggedUser.getInstance().getId());
@@ -121,6 +74,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     }
 
 
+    /**
+     * It revokes the access of the google account from the app.
+     * When revoked, it closes the app.
+     * @param
+     * @see SettingsActivity#revokeAccess(GoogleSignInClient)
+     */
     private void signOut(GoogleSignInClient mGoogleSignInClient) {
         mGoogleSignInClient.signOut()
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<Void>() {
@@ -131,13 +90,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 });
         ((SettingsActivity)getActivity()).revokeAccess(mGoogleSignInClient);
         LoggedUser.getInstance().setmUserAccount(null);
-        //((SettingsActivity)getActivity())loadingProgressBar.setVisibility(View.GONE);
-        ((SettingsActivity)getActivity()).updateUI();
         getActivity().finish();
-
     }
-
-
 
 
     @Override
@@ -146,14 +100,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(preferenceChangeListener);
 
-        Preference orgColor = findPreference(PREF_ORIGIN_COLOR);
-        Preference dstColor = findPreference(PREF_DESTINATION_COLOR);
-
-        //orgColor.setDefaultValue(getPreferenceScreen().getSharedPreferences().getString(PREF_ORIGIN_COLOR,""));
-        //dstColor.setDefaultValue(getPreferenceScreen().getSharedPreferences().getString(PREF_DESTINATION_COLOR,""));
-
         Preference preference = findPreference(PREF_REMOVE_ACCOUNT);
         preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            /**
+             * When Remove Account preference clicked it generates an {@link AlertDialog}.
+             * If confirm is pressed, it erase the user account from the app database, and executes deleteUser.
+             * @param preference Remove Account Preference
+             * @see SettingsFragment#deleteUser()
+             */
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -165,7 +119,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 deleteUser();
-                                Toast.makeText(getContext(), "Inside", Toast.LENGTH_SHORT).show();
                             }
                         });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -174,13 +127,17 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     }
                 });
                 builder.show();
-                Toast.makeText(getContext(), "Clicked", Toast.LENGTH_SHORT).show();
                 return true;
             }
         });
 
-        Preference feedBackPreference = findPreference("feedback");
+        Preference feedBackPreference = findPreference(PREF_FEEDBACK);
         feedBackPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            /**
+             * When Feedback Preference is clicked it executes sendEmail
+             * @param preference Feedback Preference
+             * @see SettingsFragment#sendEmail()
+             */
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 sendEmail();
@@ -189,6 +146,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         });
     }
 
+    /**
+     * Opens the mail app, chosen by the user, to send a mail.
+     * It opens a predefined mail message, with subject and addressee fixed, and a body which works
+     * as a hint.
+     */
     private void sendEmail() {
         Intent mailIntent = new Intent(Intent.ACTION_VIEW);
         Uri data = Uri.parse("mailto:?subject=" + "Feedback"+ "&body=" + "<i><b>Please, <br>" +
@@ -227,25 +189,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         mListener = null;
     }
 
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
-
-
-
-
 }

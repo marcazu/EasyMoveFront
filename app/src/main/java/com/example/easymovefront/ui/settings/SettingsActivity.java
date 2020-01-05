@@ -29,22 +29,27 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 
 
+/**
+ * A simple class working as a container of {@link SettingsFragment}
+ * @see SettingsFragment
+ */
 public class SettingsActivity extends AppCompatActivity implements SettingsFragment.OnFragmentInteractionListener {
 
-
-    private SettingsFragment mSettingsFragment;
     private Toolbar mToolbar;
-    private ProgressBar mloadingBar;
     DrawerLayout dLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private ProgressBar loadingDrawer;
     private ImageView drawerHeader;
 
-
+    /**
+     * Is executed when the settings menu is first opened.
+     * It initializes the view and load the xml and the settingsFragment
+     * @param savedInstanceState
+     * @see SettingsFragment
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
         setContentView(R.layout.settings_container);
         getSupportFragmentManager()
@@ -52,7 +57,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
                 .replace(R.id.fragment_container, new SettingsFragment(this))
                 .commit();
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbarSettings);
+        mToolbar = findViewById(R.id.toolbarSettings);
 
         mToolbar.setTitle("");
         setSupportActionBar(mToolbar);
@@ -60,51 +65,32 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
         setNavigationDrawer();
 
         PreferenceManager.setDefaultValues(this, R.xml.activity_settings, false);
-
-
-
     }
 
+    /**
+     * Function needed for the interaction with {@link SettingsFragment}
+     * @param uri
+     */
     @Override
     public void onFragmentInteraction(Uri uri) {
-        
+
     }
 
-    void updateUI() {
-        if (LoggedUser.getInstance().getmUserAccount() != null){
-
-
-            setResult(Activity.RESULT_OK);
-            CharSequence text = "Welcome";
-            int duration = Toast.LENGTH_LONG;
-
-            Toast toast = Toast.makeText(this, text, duration);
-            toast.show();
-            //finish();
-        } else {
-
-            setResult(Activity.RESULT_OK);
-            CharSequence text = "Signed Out";
-            int duration = Toast.LENGTH_LONG;
-
-            Toast toast = Toast.makeText(this, text, duration);
-            toast.show();
-        }
-    }
-
-    void revokeAccess(GoogleSignInClient mGoogleSignInClient) {
+    /**
+     * It revokes the access of the google account from the app.
+     * @param mGoogleSignInClient client from which it revokes the access
+     */
+    protected void revokeAccess(GoogleSignInClient mGoogleSignInClient) {
         mGoogleSignInClient.revokeAccess()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // ...
-
-                    }
-                });
+                .addOnCompleteListener(this, task -> {});
     }
 
+    /**
+     * Defines the {@link DrawerLayout} for the current screen.
+     * It highlights the current menu and links the others to the respective screens
+     */
     private void setNavigationDrawer() {
-        dLayout = (DrawerLayout) findViewById(R.id.drawer_layout_sett); // initiate a DrawerLayout
+        dLayout = findViewById(R.id.drawer_layout_sett); // initiate a DrawerLayout
         mDrawerToggle = new ActionBarDrawerToggle(this, dLayout, mToolbar,R.string.drawer_open, R.string.drawer_close) {
             @Override
             public void onDrawerOpened(View drawerView) {
@@ -121,49 +107,48 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
             }
         };
         dLayout.addDrawerListener(mDrawerToggle);
-        NavigationView navView = (NavigationView) findViewById(R.id.navigationSettings); // initiate a Navigation View
+        NavigationView navView = findViewById(R.id.navigationSettings); // initiate a Navigation View
         // implement setNavigationItemSelectedListener event on NavigationView
         navView.getMenu().getItem(3).setChecked(true);
-        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem menuItem) {
-                loadingDrawer = findViewById(R.id.loadingDrawer);
-                drawerHeader = findViewById(R.id.imageHeader);
-                CharSequence text;
-                int duration;
-                Toast toast;
-                // check selected menu item's id and replace a Fragment Accordingly
-                switch (menuItem.getItemId()) {
-                    case R.id.mapActivity:
-                        drawerHeader.setVisibility(View.GONE);
-                        loadingDrawer.setVisibility(View.VISIBLE);
-                        Intent mapIntent = new Intent(getApplicationContext(), MapsActivity.class);
-                        startActivity(mapIntent);
-                        finish();
-                        return true;
-                    case R.id.profile:
-                        drawerHeader.setVisibility(View.GONE);
-                        loadingDrawer.setVisibility(View.VISIBLE);
-                        Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
-                        startActivity(profileIntent);
-                        finish();
-                        return true;
-                    case R.id.settings:
-                        return true;
-                    case R.id.ranking:
-                        drawerHeader.setVisibility(View.GONE);
-                        loadingDrawer.setVisibility(View.VISIBLE);
-                        Intent rankingIntent = new Intent(getApplicationContext(), RankingActivity.class);
-                        startActivity(rankingIntent);
-                        finish();
-                        return true;
-                    default:
-                        return false;
-                }
+        navView.setNavigationItemSelectedListener(menuItem -> {
+            loadingDrawer = findViewById(R.id.loadingDrawer);
+            drawerHeader = findViewById(R.id.imageHeader);
+
+            // check selected menu item's id and replace a Fragment Accordingly
+            switch (menuItem.getItemId()) {
+                case R.id.mapActivity:
+                    drawerHeader.setVisibility(View.GONE);
+                    loadingDrawer.setVisibility(View.VISIBLE);
+                    Intent mapIntent = new Intent(getApplicationContext(), MapsActivity.class);
+                    startActivity(mapIntent);
+                    finish();
+                    return true;
+                case R.id.profile:
+                    drawerHeader.setVisibility(View.GONE);
+                    loadingDrawer.setVisibility(View.VISIBLE);
+                    Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+                    startActivity(profileIntent);
+                    finish();
+                    return true;
+                case R.id.settings:
+                    return true;
+                case R.id.ranking:
+                    drawerHeader.setVisibility(View.GONE);
+                    loadingDrawer.setVisibility(View.VISIBLE);
+                    Intent rankingIntent = new Intent(getApplicationContext(), RankingActivity.class);
+                    startActivity(rankingIntent);
+                    finish();
+                    return true;
+                default:
+                    return false;
             }
         });
     }
 
+    /**
+     * Defines the functionality when the back button is pressed.
+     * It opens the {@link DrawerLayout}
+     */
     @Override
     public void onBackPressed() {
         if (!dLayout.isDrawerOpen(GravityCompat.START)) dLayout.openDrawer(GravityCompat.START);
