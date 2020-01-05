@@ -579,21 +579,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //FIB 41.389482, 2.113387
         //obstacle FIB 41.389190, 2.113584
         //consell est 41.388625, 2.112816
-        final double RANG_CONSTANT_LAT = 0.0005; //0.00001;
-        final double RANG_CONSTANT_LONG = 0.0005;  //0.001;
+        final double RANG_CONSTANT_LAT = 0.000345;
+        final double RANG_CONSTANT_LONG = 0.000345;
         Iterator<Marker> iterator = obstacles.iterator();
         while (iterator.hasNext()) {
             Marker marker = iterator.next();
             double latObstacle = marker.getPosition().latitude;
             double longObstacle = marker.getPosition().longitude;
             //System.out.println("Latitud obstacle "+ latObstacle);
-            for (int j = 0; j < decodedPath.size(); j += 100) {
+            for (int j = 0; j < decodedPath.size(); ++j) {
                 double latPuntRuta = decodedPath.get(j).latitude;
                 double longPuntRuta = decodedPath.get(j).longitude;
                 //System.out.println("Latitud punt ruta "+ latPuntRuta);
                 if ((latObstacle <= latPuntRuta + RANG_CONSTANT_LAT  && latObstacle >= latPuntRuta - RANG_CONSTANT_LAT) &&
                         (longObstacle <= longPuntRuta + RANG_CONSTANT_LONG  && longObstacle >= longPuntRuta - RANG_CONSTANT_LONG)
                     ) {
+                    System.out.println("latObstacle: " + latObstacle + "longObstacle: " + longObstacle);
+                    System.out.println("latPuntRuta: " + latPuntRuta + "longPuntRuta: " + longPuntRuta);
                     return true;
                 }
             }
@@ -784,14 +786,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         colors.add(0xff00ff00); //green
         colors.add(0xffff00ff); //magenta
         colors.add(0xffffff00); //yellow
-        if (obstructedRoutes.size() == results.routes.length) {
+        if (results.routes.length == 0) {
+            Toast toast = Toast.makeText(this, "NO HI HA RUTES" , Toast.LENGTH_LONG);
+            toast.show();
+        }
+        else if (obstructedRoutes.size() == results.routes.length) {
             Toast toast = Toast.makeText(this, "NO HI HA RUTES NO OBSTACULITZADES" , Toast.LENGTH_LONG);
             toast.show();
         }
-        for (int i = 0; i < results.routes.length; ++i ) {
-            if (!obstructedRoutes.contains(i)) {
-                List<LatLng> decodedPath = PolyUtil.decode(results.routes[i].overviewPolyline.getEncodedPath());
-                polylines.add(mMap.addPolyline(new PolylineOptions().color(colors.get(i)).addAll(decodedPath)));
+        else {
+            for (int i = 0; i < results.routes.length; ++i) {
+                if (!obstructedRoutes.contains(i)) {
+                    List<LatLng> decodedPath = PolyUtil.decode(results.routes[i].overviewPolyline.getEncodedPath());
+                    polylines.add(mMap.addPolyline(new PolylineOptions().color(colors.get(i)).addAll(decodedPath)));
+                }
             }
         }
     }
