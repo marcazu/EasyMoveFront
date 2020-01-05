@@ -52,6 +52,10 @@ import java.util.concurrent.ExecutionException;
 
 import static android.app.Activity.RESULT_OK;
 
+/**
+ * This fragment is used to display the obstacle on the screen: title, description, picture, aswell
+ * as the number of likes and dislikes
+ */
 public class DisplayObstacleFragment extends DialogFragment implements AsyncResponse {
 
     private JSONObject json;
@@ -86,12 +90,21 @@ public class DisplayObstacleFragment extends DialogFragment implements AsyncResp
     private Bitmap mPicture = null;
     private String mPicturePath;
 
+    /**
+     * Constructor of the class
+     * @param context context of the activity the constructor is called from
+     * @param marker marker to be displayed
+     * @param loading pointer to the progress bar to display
+     */
     public DisplayObstacleFragment(Context context, Marker marker, ProgressBar loading) {
         mapsLoading = loading;
         mContext = context;
         mMarker = marker;
     }
 
+    /**
+     * This handles the event listener for all the elements of the UI
+     */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         obtainMarkerID();
@@ -213,6 +226,10 @@ public class DisplayObstacleFragment extends DialogFragment implements AsyncResp
         return builder.create();
     }
 
+    /**
+     * Processes the response from the network thread used to update backend
+     * @param output if the call is succesfull or not
+     */
     @Override
     public void processFinish(String output) {
         editTitle.setVisibility(View.GONE);
@@ -232,11 +249,18 @@ public class DisplayObstacleFragment extends DialogFragment implements AsyncResp
         obstacleLoading.setVisibility(View.GONE);
     }
 
+    /**
+     * Processes the response from the network thread used to update backend
+     * @param output if the call is successful or not
+     */
     @Override
     public void processFinish(JSONObject output) {
 
     }
 
+    /**
+     * Handles the network thread instantation aswell as obtaning the info from the UI
+     */
     private void updateObstacleBackend() {
         String picUrl = photoUrl;
         if (mPicture != null) {
@@ -254,6 +278,11 @@ public class DisplayObstacleFragment extends DialogFragment implements AsyncResp
         myTask.execute(editdesc, edittitle, mId, mIdCreador, String.valueOf(mMarker.getPosition().latitude), String.valueOf(mMarker.getPosition().longitude), picUrl);
     }
 
+    /**
+     * This changes the UI to hide all the current element and display the editext and camera button
+     * needed to edit the obstacle
+     * @param v view that the fragment is being displayed on
+     */
     private void editObstacle(View v) {
         pic.setVisibility(View.GONE);
         title.setVisibility(View.GONE);
@@ -295,6 +324,12 @@ public class DisplayObstacleFragment extends DialogFragment implements AsyncResp
         });
     }
 
+    /**
+     * Handles the camera return response
+     * @param requestCode not used, always 1
+     * @param resultCode if the call was successful or not
+     * @param data the intent data
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1 && resultCode == RESULT_OK) {
@@ -309,6 +344,12 @@ public class DisplayObstacleFragment extends DialogFragment implements AsyncResp
         }
     }
 
+    /**
+     * Handles permissions response of camera
+     * @param requestCode not used
+     * @param permissions number of permissions
+     * @param grantResults if the permission was granted or not
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == 0) {
@@ -319,12 +360,19 @@ public class DisplayObstacleFragment extends DialogFragment implements AsyncResp
         }
     }
 
+    /**
+     * Displays the edit button only if the obstacle was created by the current user
+     */
     private void updateEditButton() {
         if (!LoggedUser.getInstance().getId().equals(mIdCreador)) {
             mEdit.setVisibility(View.GONE);
         }
     }
 
+    /**
+     * Updates the like or dislike number
+     * @param type like or dislike
+     */
     private void updateLikeNumber(String type) {
         Integer number;
         if (type == "like") {
@@ -346,6 +394,9 @@ public class DisplayObstacleFragment extends DialogFragment implements AsyncResp
         }
     }
 
+    /**
+     * Requests the marker from backend to make sure its up to date
+     */
     private void getUpdatedMarker() {
         GetSingleMarkerTask myTask = new GetSingleMarkerTask(mContext);
         myTask.execute(mId);
@@ -361,6 +412,9 @@ public class DisplayObstacleFragment extends DialogFragment implements AsyncResp
         }
     }
 
+    /**
+     * Gets the total number of likes and dislikes of the obstacle
+     */
     private void updateLikeStatus() {
         try {
             JSONArray jarray = json.getJSONArray("usuarisLike");
@@ -396,6 +450,9 @@ public class DisplayObstacleFragment extends DialogFragment implements AsyncResp
         }
     }
 
+    /**
+     * Gets the id of the obstacle
+     */
     private void obtainMarkerID() {
         json = ObstacleMap.getInstance().getMap().get(mMarker);
         try {
