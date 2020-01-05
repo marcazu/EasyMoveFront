@@ -36,7 +36,9 @@ import java.io.File;
 
 import static android.app.Activity.RESULT_OK;
 
-
+/**
+ * This fragment is used to create an obstacle, which has a title, description and a picture
+ */
 public class ObstacleDialogFragment extends DialogFragment {
 
     private OnFragmentInteractionListener mListener;
@@ -49,15 +51,25 @@ public class ObstacleDialogFragment extends DialogFragment {
     private Bitmap mPicture = null;
     private String mPicturePath;
 
+    /**
+     * This is used to communicate to the main activity that OK has been pressed
+     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onOkPressedObstacle(String pos, String desc, Bitmap foto, String title);
     }
 
+    /**
+     * Constructor of the class
+     * @param context is needed to know which activity this fragment belongs to
+     */
     public ObstacleDialogFragment(Context context) {
         mContext = context;
     }
 
+    /**
+     * This handles the event listener for all the elements of the UI
+     */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -136,6 +148,12 @@ public class ObstacleDialogFragment extends DialogFragment {
         return builder.create();
     }
 
+    /**
+     * Handles the camera return response
+     * @param requestCode not used, always 1
+     * @param resultCode if the call was successful or not
+     * @param data the intent data
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1 && resultCode == RESULT_OK) {
@@ -149,6 +167,12 @@ public class ObstacleDialogFragment extends DialogFragment {
         }
     }
 
+    /**
+     * Handles permissions response of camera
+     * @param requestCode not used
+     * @param permissions number of permissions
+     * @param grantResults if the permission was granted or not
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == 0) {
