@@ -80,6 +80,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+/**
+ * This activity displays a Google Maps fragment along with a list of obstacles on top of it. Each
+ * one can be clicked to bring up a window displaying info. This activity also displays a toolbar
+ * on top of the screen which has buttons that allow the user to add an obstacle to the map aswell as
+ * generate a new route or see the steps of said route.
+ */
 public class MapsActivity extends AppCompatActivity implements AsyncResponse, OnMapReadyCallback, LocationListener, RouteDialogFragment.OnFragmentInteractionListener, ObstacleDialogFragment.OnFragmentInteractionListener, StepDialogFragment.OnListFragmentInteractionListener {
 
     private GoogleMap mMap;
@@ -105,7 +111,11 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
     private Fragment newFragment3;
     private boolean inStepDialogFragment;
 
-
+    /**
+     * Initializes the map instance, retrieves all markers from backend and initializes the drawer
+     * and tool bar instances
+     * @param savedInstanceState of the activity created
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -136,7 +146,9 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
     }
 
 
-
+    /**
+     * Creates the lateral menu (drawer) and sets its listener for each possible clicked item
+     */
     private void setNavigationDrawer() {
         dLayout = (DrawerLayout) findViewById(R.id.drawer_layout); // initiate a DrawerLayout
         mDrawerToggle = new ActionBarDrawerToggle(this, dLayout, mToolbar,R.string.drawer_open, R.string.drawer_close) {
@@ -196,6 +208,11 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
         });
     }
 
+    /**
+     * This displays the list of options in the menu
+     * @param menu to be inflated with options
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_mapsactivity, menu);
@@ -204,6 +221,11 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * This acts as a handler for when an item of the menu provided is clicked
+     * @param item MenuItem
+     * @return true always
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
@@ -245,8 +267,7 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
+     * This is where we can add markers or lines, add listeners or move the camera.
      * If Google Play services is not installed on the device, the user will be prompted to install
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
@@ -287,6 +308,10 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
         });
     }
 
+    /**
+     * This method retrieves all the markers available from backend and proceeds to instantiate each
+     * one on top of the map fragment
+     */
     private void populateMap() {
         GetMarkerTask myTask = new GetMarkerTask(getApplicationContext());
         myTask.execute();
@@ -324,6 +349,11 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
             }
     }
 
+    /**
+     * This method is called when location changes, it updated the local variable for currentUser
+     * location
+     * @param location new location
+     */
     @Override
     public void onLocationChanged(Location location) {
 
@@ -358,7 +388,10 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
     }
 
 
-
+    /**
+     * Initializes the location manager which will keep track of the currentUser's location
+     * It will prompt the user to accept permissions if it hasn't been done yet
+     */
     private void initializeLocationManager() {
 
         //get the location manager
@@ -390,6 +423,12 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
 
     }
 
+    /**
+     * This handles the permissions callback result
+     * @param requestCode
+     * @param permissions the list of permissions requiered
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
 
@@ -413,6 +452,13 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
         }
     }
 
+    /**
+     * This method creates an obstacle and adds it to the map
+     * @param pos position of the currentUser
+     * @param desc description of the obstacle
+     * @param foto picture attached to the obstacle
+     * @param title title of the obstacle
+     */
     private void createObstacle(String pos, String desc, Bitmap foto, String title) {
         Address posicio = null;
         CurrentBitmap.getInstance().setBitMap(foto);
@@ -462,6 +508,14 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
         }
     }
 
+    /**
+     * This method created a network asyncTask to update the backend with the new obstacle
+     * @param desc description of the obstacle
+     * @param latitude in º of the obstacle
+     * @param longitude in º of the obstacle
+     * @param title of the obstacle
+     * @param mark instance of Marker corresponding to the obstacle
+     */
     private void addMarkerToBack(String desc, double latitude, double longitude, String title, Marker mark){
         CreateMarkerTask myTask = new CreateMarkerTask(getApplicationContext());
         currentMarker = mark;
@@ -470,16 +524,27 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
         myTask.execute(desc, LoggedUser.getInstance().getId(), String.valueOf(latitude), String.valueOf(longitude), title);
     }
 
+    /**
+     * Handles the loading bar status and adds the marker to the map
+     * @param output Json containing the obstacle info
+     */
     @Override
     public void processFinish(JSONObject output) {
         ObstacleMap.getInstance().addMarker(currentMarker, output);
         mloadingBar.setVisibility(View.GONE);
     }
 
+    /**
+     * Handles the loading bar status and adds the marker to the map
+     * @param output Json containing the obstacle info
+     */
     @Override
     public void processFinish(String output) {
     }
 
+    /**
+     * Clears the currently drawn route
+     */
     private void clearMap() {
         for(Polyline line : polylines)
         {
@@ -496,6 +561,11 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
         markers.clear();
     }
 
+    /**
+     * Creates the route and draws the polylines on the map
+     * @param inputSource the address of the starting position
+     * @param inputDest the address of the ending position
+     */
     private void createRoute(String inputSource, String inputDest) {
         Address addOg = null;
         Address addDest = null;
@@ -564,7 +634,10 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
     }
 
 
-
+    /**
+     * Obtains an instance of the geocoder used to translate LatLongs into actual physical addresses
+     * @return the geocoder context
+     */
     private GeoApiContext getGeoContext() {
         GeoApiContext geoApiContext = new GeoApiContext();
         return geoApiContext.setQueryRateLimit(3)
@@ -574,17 +647,12 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
                 .setWriteTimeout(100, TimeUnit.SECONDS);
     }
 
-    /*private void addMarkersToMap(DirectionsResult results, GoogleMap mMap) {
-        markers.add(mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].startLocation.lat,results.routes[0].legs[0].startLocation.lng)).title(results.routes[0].legs[0].startAddress)));
-        markers.add(mMap.addMarker(
-                new MarkerOptions()
-                        .position(new LatLng(
-                                results.routes[0].legs[0].endLocation.lat,
-                                results.routes[0].legs[0].endLocation.lng))
-                        .title(results.routes[0].legs[0].endAddress)
-                        .snippet(getEndLocationTitle(results))));
-    }*/
 
+    /**
+     * Draws the starting and ending point markers for the route to the map
+     * @param results the array containing the starting and ending point
+     * @param mMap the GoogleMap map instance
+     */
     private void addMarkersToMap(DirectionsResult results, GoogleMap mMap) {
 
         String orgColor = mSharedPreference.getString("origin_color","Red");
@@ -735,10 +803,20 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
         markers.add(mMap.addMarker(destination));
     }
 
+    /**
+     * Gets the route estimated time
+     * @param results the array containing the list of steps
+     * @return the estimated time in humanReadable form
+     */
     private String getEndLocationTitle(DirectionsResult results){
         return  "Time :"+ results.routes[0].legs[0].duration.humanReadable + " Distance :" + results.routes[0].legs[0].distance.humanReadable;
     }
 
+    /**
+     * Draws polylines
+     * @param results the array containing the points that need to be drawn
+     * @param mMap the Google Maps instance
+     */
     private void addPolyline(DirectionsResult results, GoogleMap mMap) {
         ArrayList<Integer> colors = new ArrayList<>();
         colors.add(0xff000000); //black
@@ -751,26 +829,6 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
         }
     }
 
-    public static Bitmap StringToBitMap(String image){
-        try{
-            byte [] encodeByte=Base64.decode(image, Base64.DEFAULT);
-            Bitmap bitmap= BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-            return bitmap;
-        }catch(Exception e){
-            e.getMessage();
-            return null;
-        }
-    }
-
-    public static String BitMapToString(Bitmap bitmap) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte[] arr = baos.toByteArray();
-        String result = Base64.encodeToString(arr, Base64.DEFAULT);
-        return result;
-    }
-
-
     @Override
     public void onOkPressed(String src, String dest) {
         clearMap();
@@ -782,6 +840,10 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
         createObstacle(pos, desc, foto, title);
     }
 
+    /**
+     * Defines the functionality when the back button is pressed.
+     * It opens the {@link DrawerLayout}
+     */
     @Override
     public void onBackPressed() {
         if (inStepDialogFragment) {
@@ -813,16 +875,5 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
     public void onListFragmentInteraction(String mItem) {
 
     }
-
-    /*
-    @Override
-    public void onListFragmentInteraction(String mItem) {
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction ft = manager.beginTransaction();
-        ft.replace(R.id.fragment_container, newFragment3);
-        ft.add(newFragment3, null);
-        ft.commit();
-
-
-    } */
+    
 }

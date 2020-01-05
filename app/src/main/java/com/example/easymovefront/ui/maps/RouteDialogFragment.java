@@ -18,7 +18,10 @@ import android.widget.TextView;
 
 import com.example.easymovefront.R;
 
-
+/**
+ * This fragment is used to create a route to display on the maps fragment, which has a source and
+ * a destionation; if the source is left empty it will use the user's current location
+ */
 public class RouteDialogFragment extends DialogFragment {
 
     private OnFragmentInteractionListener mListener;
@@ -26,15 +29,25 @@ public class RouteDialogFragment extends DialogFragment {
     private EditText mEditText2;
     private Context mContext;
 
+    /**
+     * This is used to communicate to the main activity that OK has been pressed
+     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onOkPressed(String src, String dest);
     }
 
+    /**
+     * Constructor of the class
+     * @param context is needed to know which activity this fragment belongs to
+     */
     public RouteDialogFragment(Context context) {
         mContext = context;
     }
 
+    /**
+     * This handles the event listener for all the elements of the UI
+     */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -93,33 +106,4 @@ public class RouteDialogFragment extends DialogFragment {
         mListener = null;
     }
 
-    /*@Override*/
-    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        // Return input text to activity
-        EditText src = v.findViewById(R.id.source);
-        EditText dest = v.findViewById(R.id.destination);
-        mListener.onOkPressed(src.getText().toString(), dest.getText().toString());
-        this.dismiss();
-        return true;
-    }
-
-
-    /*public void getText(View v) {
-        if (mListener != null) {
-            EditText src = v.findViewById(R.id.source);
-            EditText dest = v.findViewById(R.id.destination);
-            mListener.onOkPressed(src.getText().toString(), dest.getText().toString());
-        }
-    }^/
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
 }
