@@ -32,27 +32,22 @@ import com.google.android.gms.tasks.Task;
 
 /**
  * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link SettingsFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link SettingsFragment# newInstance} factory method to
- * create an instance of this fragment.
+ * It contains all preferences of the app
  */
 public class SettingsFragment extends PreferenceFragmentCompat {
 
     private OnFragmentInteractionListener mListener;
     private Context mContext;
+    private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
     public static final String PREF_REMOVE_ACCOUNT = "removeAccount";
     public static final String PREF_FEEDBACK = "feedback";
+
 
     public SettingsFragment(){}
 
     public SettingsFragment(Context context) {
         mContext = context;
     }
-
-
-    private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
 
 
     @Override
