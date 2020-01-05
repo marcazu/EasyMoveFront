@@ -35,12 +35,20 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+/**
+ * It contains all of Login screen.
+ */
 public class LoginActivity extends AppCompatActivity {
 
     public static LoggedUser mUserAccount;
     private SharedPreferences pref;
     private ProgressBar loadingProgressBar;
 
+    /**
+     * Is executed when the login screen is opened.
+     * It initializes the view and load the xml
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         mUserAccount = LoggedUser.getInstance();
@@ -77,6 +85,11 @@ public class LoginActivity extends AppCompatActivity {
             launchMaps();
         }
         findViewById(R.id.sign_in_button).setOnClickListener(new View.OnClickListener() {
+            /**
+             * If is clicked the sign in button it executes signIn
+             * @param v View which is clicked
+             * @see LoginActivity#signIn(GoogleSignInClient)
+             */
             @Override
             public void onClick(View v) {
                 loadingProgressBar.setVisibility(View.VISIBLE);
@@ -89,21 +102,25 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.signOut_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadingProgressBar.setVisibility(View.VISIBLE);
-                switch (v.getId()) {
-                    case R.id.signOut_button:
-                        signOut(mUserAccount.getmGoogleSignInClient());
-                        break;
-                    // ...
-                }
+        findViewById(R.id.signOut_button).setOnClickListener(v -> {
+            loadingProgressBar.setVisibility(View.VISIBLE);
+            switch (v.getId()) {
+                case R.id.signOut_button:
+                    signOut(mUserAccount.getmGoogleSignInClient());
+                    break;
             }
         });
 
     }
 
+    /**
+     * Handles the google sign in task data.
+     * It delegates the task to handleSignInResult
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     * @see #handleSignInResult(Task)
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -115,6 +132,10 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Updates the user interface depending if the user is logged or not.
+     * It will display the login button or not
+     */
     private void updateUI() {
         if (mUserAccount.getmUserAccount() != null){
             final SignInButton googleButton = findViewById(R.id.sign_in_button);
@@ -141,6 +162,10 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Executes the google sign in task.
+     * @param mGoogleSignInClient client which logs in
+     */
     private void signIn(GoogleSignInClient mGoogleSignInClient) {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, 1);
@@ -148,12 +173,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void signOut(GoogleSignInClient mGoogleSignInClient) {
         mGoogleSignInClient.signOut()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // ...
-                    }
-                });
+                .addOnCompleteListener(this, task -> {});
         revokeAccess(mGoogleSignInClient);
         mUserAccount.setmUserAccount(null);
         loadingProgressBar.setVisibility(View.GONE);
@@ -161,14 +181,17 @@ public class LoginActivity extends AppCompatActivity {
     }
     private void revokeAccess(GoogleSignInClient mGoogleSignInClient) {
         mGoogleSignInClient.revokeAccess()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // ...
-                    }
-                });
+                .addOnCompleteListener(this, task -> {});
     }
 
+    /**
+     * Handles the data provided from google sign in task.
+     * Saves the user in the database with updateBackend
+     * When finished calls launchMaps
+     * @param completedTask
+     * @see #updateBackend(LoggedUser)
+     * @see #launchMaps()
+     */
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             loadingProgressBar.setVisibility(View.GONE);
@@ -191,12 +214,13 @@ public class LoginActivity extends AppCompatActivity {
 
             Toast toast = Toast.makeText(this, text, duration);
             toast.show();
-            //e.printStackTrace();
-            //Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
-            //updateUI(null);
         }
     }
 
+    /**
+     * Starts a task to save the user to the database.
+     * @param acc logged google account
+     */
     private void updateBackend(LoggedUser acc) throws ExecutionException, InterruptedException, TimeoutException {
         GoogleSignInAccount aux = acc.getmUserAccount();
         UpdateUsersTask myTask = new UpdateUsersTask(this);
@@ -205,6 +229,9 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Open the maps screen.
+     */
     public void launchMaps() {
         Intent intent = new Intent(this, MapsActivity.class);
         startActivity(intent);
