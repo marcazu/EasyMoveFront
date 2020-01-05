@@ -33,6 +33,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * It is the Ranking container.
+ */
 public class RankingActivity extends AppCompatActivity  {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -47,6 +50,11 @@ public class RankingActivity extends AppCompatActivity  {
 
     private ArrayList<RankingUser> mUserList;
 
+    /**
+     * Is executed when the ranking screen is opened.
+     * It initializes the view and load the xml
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +84,10 @@ public class RankingActivity extends AppCompatActivity  {
                 DividerItemDecoration.VERTICAL));
     }
 
+    /**
+     * Gets the ranking list from the database.
+     * This list contain the tenth best users.
+     */
     private void getRankingList() {
         GetRankingTask myTask = new GetRankingTask(getApplicationContext());
         myTask.execute();
@@ -102,6 +114,10 @@ public class RankingActivity extends AppCompatActivity  {
         }
     }
 
+    /**
+     * Defines the {@link DrawerLayout} for the current screen.
+     * It highlights the current menu and links the others to the respective screens
+     */
     private void setNavigationDrawer() {
         dLayout = (DrawerLayout) findViewById(R.id.drawer_layout); // initiate a DrawerLayout
         mDrawerToggle = new ActionBarDrawerToggle(this, dLayout, mToolbar,R.string.drawer_open, R.string.drawer_close) {
@@ -163,6 +179,10 @@ public class RankingActivity extends AppCompatActivity  {
         });
     }
 
+    /**
+     * Defines the functionality when the back button is pressed.
+     * It opens the {@link DrawerLayout}
+     */
     @Override
     public void onBackPressed() {
         if (!dLayout.isDrawerOpen(GravityCompat.START)) dLayout.openDrawer(GravityCompat.START);

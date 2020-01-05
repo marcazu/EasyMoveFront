@@ -32,7 +32,7 @@ import com.google.android.gms.tasks.Task;
 
 /**
  * A simple {@link Fragment} subclass.
- * It contains all preferences of the app
+ * It contains all preferences of the app.
  */
 public class SettingsFragment extends PreferenceFragmentCompat {
 
@@ -43,8 +43,15 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public static final String PREF_FEEDBACK = "feedback";
 
 
+    /**
+     * Constructor of the class
+     */
     public SettingsFragment(){}
 
+    /**
+     * Constructor with a given context
+     * @param context
+     */
     public SettingsFragment(Context context) {
         mContext = context;
     }

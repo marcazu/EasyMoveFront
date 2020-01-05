@@ -36,7 +36,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
- * It contains all of Login screen.
+ * This activity contains all of Login screen.
+ * It loads the xml. It has a login button, which is to login with google.
  */
 public class LoginActivity extends AppCompatActivity {
 

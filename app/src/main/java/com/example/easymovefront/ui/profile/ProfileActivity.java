@@ -33,6 +33,9 @@ import java.util.concurrent.ExecutionException;
 
 /**
  * It contains all of Profile screen.
+ * It is a user-friendly interface. Displays the google user profile pic, its name,
+ * its points and its number of obstacles created.
+ * It also contains the sign out button.
  */
 public class ProfileActivity extends AppCompatActivity {
     private ActionBarDrawerToggle mDrawerToggle;

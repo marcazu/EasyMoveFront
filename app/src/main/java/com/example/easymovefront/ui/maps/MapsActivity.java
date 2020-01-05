@@ -83,7 +83,7 @@ import androidx.fragment.app.FragmentTransaction;
 /**
  * This activity displays a Google Maps fragment along with a list of obstacles on top of it. Each
  * one can be clicked to bring up a window displaying info. This activity also displays a toolbar
- * on top of the screen which has buttons that allow the user to add an obstacle to the map aswell as
+ * on top of the screen which has buttons that allow the user to add an obstacle to the map as well as
  * generate a new route or see the steps of said route.
  */
 public class MapsActivity extends AppCompatActivity implements AsyncResponse, OnMapReadyCallback, LocationListener, RouteDialogFragment.OnFragmentInteractionListener, ObstacleDialogFragment.OnFragmentInteractionListener, StepDialogFragment.OnListFragmentInteractionListener {
