@@ -24,6 +24,7 @@ import com.example.easymovefront.data.model.LoggedUser;
 import com.example.easymovefront.network.CreateImageFromUrlTask;
 import com.example.easymovefront.network.CreateMarkerTask;
 import com.example.easymovefront.network.GetSingleUserTask;
+import com.example.easymovefront.ui.login.LoginActivity;
 import com.example.easymovefront.ui.maps.MapsActivity;
 import com.example.easymovefront.ui.ranking.RankingActivity;
 import com.example.easymovefront.ui.settings.SettingsActivity;
@@ -38,6 +39,9 @@ import org.json.JSONObject;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * It contains all of Profile screen.
+ */
 public class ProfileActivity extends AppCompatActivity {
     private ActionBarDrawerToggle mDrawerToggle;
     private Toolbar mToolbar;
@@ -46,6 +50,11 @@ public class ProfileActivity extends AppCompatActivity {
     private ProgressBar loadingDrawer;
     private ImageView drawerHeader;
 
+    /**
+     * Is executed when the settings menu is first opened.
+     * It initializes the view and load the xml
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,40 +68,51 @@ public class ProfileActivity extends AppCompatActivity {
         initializeProfileUser();
         final Button SignOut = findViewById(R.id.signOut_button);
         findViewById(R.id.signOut_button).setOnClickListener(new View.OnClickListener() {
+            /**
+             * If is clicked the sign out button it executes signOut
+             * @param v View which is clicked
+             * @see ProfileActivity#signOut(GoogleSignInClient)
+             */
             @Override
             public void onClick(View v) {
                 switch (v.getId()) {
                     case R.id.signOut_button:
                         signOut(LoggedUser.getInstance().getmGoogleSignInClient());
                         break;
-                    // ...
                 }
             }
         });
     }
 
+    /**
+     * Logs out the user.
+     * It redirects to the login screen.
+     * @param mGoogleSignInClient client from which it closes the session
+     * @see LoginActivity
+     */
     private void signOut(GoogleSignInClient mGoogleSignInClient) {
         mGoogleSignInClient.signOut()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // ...
-                    }
-                });
+                .addOnCompleteListener(this, task -> {});
         revokeAccess(mGoogleSignInClient);
-        finish();
+        Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+        startActivity(loginIntent);
     }
 
+    /**
+     * It revokes the access of the google account from the app.
+     * @param mGoogleSignInClient client from which it revokes the access
+     */
     private void revokeAccess(GoogleSignInClient mGoogleSignInClient) {
         mGoogleSignInClient.revokeAccess()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // ...
-                    }
-                });
+                .addOnCompleteListener(this, task -> {});
     }
 
+
+    /**
+     * It initializes all elements of the profile screen.
+     * It loads the profile picture, the name and email of the google user. And also it loads
+     * user's score and number of obstacles created.
+     */
     private void initializeProfileUser() {
         ImageView pic = findViewById(R.id.pictureProfile);
         TextView name = findViewById(R.id.nameProfile);
@@ -127,8 +147,6 @@ public class ProfileActivity extends AppCompatActivity {
                 if (o == ',') count++;
             }
             obs.setText(String.valueOf(count));
-
-
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -139,11 +157,19 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Defines the functionality when the back button is pressed.
+     * It opens the {@link DrawerLayout}
+     */
     @Override
     public void onBackPressed() {
         if (!dLayout.isDrawerOpen(GravityCompat.START)) dLayout.openDrawer(GravityCompat.START);
     }
 
+    /**
+     * Defines the {@link DrawerLayout} for the current screen.
+     * It highlights the current menu and links the others to the respective screens
+     */
     private void setNavigationDrawer() {
         dLayout = (DrawerLayout) findViewById(R.id.drawer_layout); // initiate a DrawerLayout
         mDrawerToggle = new ActionBarDrawerToggle(this, dLayout, mToolbar,R.string.drawer_open, R.string.drawer_close) {
@@ -192,13 +218,8 @@ public class ProfileActivity extends AppCompatActivity {
                         finish();
                         return true;
                     case R.id.settings:
-                        text = "SETTINGS PLACEHOLDER";
-                        duration = Toast.LENGTH_LONG;
                         Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
                         startActivity(intent);
-
-                        toast = Toast.makeText(getApplicationContext(), text, duration);
-                        toast.show();
                         return true;
                     default:
                         return false;

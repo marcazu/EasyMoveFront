@@ -77,7 +77,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     /**
      * It revokes the access of the google account from the app.
      * When revoked, it closes the app.
-     * @param
+     * @param mGoogleSignInClient client from which it revokes the access
      * @see SettingsActivity#revokeAccess(GoogleSignInClient)
      */
     private void signOut(GoogleSignInClient mGoogleSignInClient) {
