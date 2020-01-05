@@ -6,14 +6,6 @@
     android:layout_height="match_parent">
 
 
-
-    <PreferenceCategory
-        android:title="GENERAL">
-        <SwitchPreferenceCompat
-            android:key="notifications"
-            android:title="Enable message notifications"/>
-    </PreferenceCategory>
-
     <PreferenceCategory
         android:title="MARKER">
         <ListPreference
