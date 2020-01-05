@@ -13,5 +13,6 @@
     <color name="colorStartBlue">#09C6DF</color>
     <color name="colorEndBlue">#7DDBF0</color>
     <color name="colorDisplayBackground">#CAF8E3</color>
+    <color name="colorHeaderRank">#09C6DF</color>
 
 </resources>

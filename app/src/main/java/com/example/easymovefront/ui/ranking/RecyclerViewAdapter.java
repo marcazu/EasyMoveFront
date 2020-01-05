@@ -27,10 +27,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         public TextView textView;
+        public TextView pointsView;
         public ImageView imgView;
         public MyViewHolder(View v) {
             super(v);
             textView = (TextView) v.findViewById(R.id.rankTextView);
+            pointsView = (TextView) v.findViewById(R.id.rankPointsView);
             imgView = (ImageView) v.findViewById(R.id.rankIcon);
         }
     }
@@ -59,8 +61,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         int rank = position + 1;
-        String text = String.valueOf(rank) + ". " + mDataset.get(position).getNom() + "\n   " + mDataset.get(position).getPuntuacio() + " points\n";
+        String text = "     " + mDataset.get(position).getNom();
+        String points = mDataset.get(position).getPuntuacio().toString();
         holder.textView.setText(text);
+        holder.pointsView.setText(points);
         if (LoggedUser.getInstance().getId().equals(String.valueOf(mDataset.get(position).getId())))
             holder.textView.setTextColor(Color.rgb(0,133,119));
         if (rank == 1)
@@ -69,6 +73,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             holder.imgView.setImageResource(R.drawable.second);
         else if (rank == 3)
             holder.imgView.setImageResource(R.drawable.third);
+        else
+            holder.imgView.setImageResource(R.drawable.hyphen);
+
 
 
     }
