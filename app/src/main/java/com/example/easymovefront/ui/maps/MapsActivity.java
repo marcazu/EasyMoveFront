@@ -122,7 +122,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         //getting the toolbar
         mGeneratedRoute = false;
-        System.out.println(mGeneratedRoute);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mloadingBar = findViewById(R.id.loadingMaps);
 
@@ -571,27 +570,29 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         for (int i = 0; i < result.routes.length; ++i) {
             if (obstacleInRange(result.routes[i]))
                 obstructedRoutes.add(i);
-        }
+            }
+
     }
 
     private boolean obstacleInRange(DirectionsRoute route) { //mirar si la ruta té un obstacle en un rang proper en qualsevol dels seus punts
         List<LatLng> decodedPath = PolyUtil.decode(route.overviewPolyline.getEncodedPath());
-        final double RANG_CONSTANT_LAT = 1; //0.00001;
-        final double RANG_CONSTANT_LONG = 1;  //0.001;
+        //FIB 41.389482, 2.113387
+        //obstacle FIB 41.389190, 2.113584
+        //consell est 41.388625, 2.112816
+        final double RANG_CONSTANT_LAT = 0.0005; //0.00001;
+        final double RANG_CONSTANT_LONG = 0.0005;  //0.001;
         Iterator<Marker> iterator = obstacles.iterator();
         while (iterator.hasNext()) {
             Marker marker = iterator.next();
             double latObstacle = marker.getPosition().latitude;
             double longObstacle = marker.getPosition().longitude;
-            System.out.println("Latitud obstacle "+ latObstacle);
-            for (int j = 0; j < decodedPath.size(); ++j) {
+            //System.out.println("Latitud obstacle "+ latObstacle);
+            for (int j = 0; j < decodedPath.size(); j += 100) {
                 double latPuntRuta = decodedPath.get(j).latitude;
                 double longPuntRuta = decodedPath.get(j).longitude;
-                System.out.println("Latitud punt ruta "+ latPuntRuta);
-                if ((latPuntRuta + RANG_CONSTANT_LAT >= latObstacle &&
-                        latPuntRuta - RANG_CONSTANT_LAT <= latObstacle) &&
-                        (longPuntRuta + RANG_CONSTANT_LONG >= longObstacle &&
-                                longPuntRuta - RANG_CONSTANT_LONG <= longObstacle)
+                //System.out.println("Latitud punt ruta "+ latPuntRuta);
+                if ((latObstacle <= latPuntRuta + RANG_CONSTANT_LAT  && latObstacle >= latPuntRuta - RANG_CONSTANT_LAT) &&
+                        (longObstacle <= longPuntRuta + RANG_CONSTANT_LONG  && longObstacle >= longPuntRuta - RANG_CONSTANT_LONG)
                     ) {
                     return true;
                 }
@@ -776,7 +777,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void addPolyline(DirectionsResult results, GoogleMap mMap) {
         ArrayList<Integer> colors = new ArrayList<>();
-        obstructedRoutes = new ArrayList<>();
         colors.add(0xff000000); //black
         colors.add(0xff0000ff); //blue
         colors.add(0xffff0000); //red
@@ -784,6 +784,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         colors.add(0xff00ff00); //green
         colors.add(0xffff00ff); //magenta
         colors.add(0xffffff00); //yellow
+        if (obstructedRoutes.size() == results.routes.length) {
+            Toast toast = Toast.makeText(this, "NO HI HA RUTES NO OBSTACULITZADES" , Toast.LENGTH_LONG);
+            toast.show();
+        }
         for (int i = 0; i < results.routes.length; ++i ) {
             if (!obstructedRoutes.contains(i)) {
                 List<LatLng> decodedPath = PolyUtil.decode(results.routes[i].overviewPolyline.getEncodedPath());
@@ -840,12 +844,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void formStepByStepRoute(DirectionsResult result) {
         steps = new ArrayList<>();
         for (int i = 0; i < result.routes.length; ++i) {
-            steps.add ("RUTA "+ (i+1));
-            for (int j = 0; j < result.routes[i].legs.length; ++j) {
-                for (int k = 0; k < result.routes[i].legs[j].steps.length; ++k) {
-                    String html_steps = result.routes[i].legs[j].steps[k].htmlInstructions;
-                    String plain_text_steps  = html_steps.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", " ");
-                    steps.add(plain_text_steps);
+            if (!obstructedRoutes.contains(i)) {
+                steps.add("RUTA " + (i + 1));
+                for (int j = 0; j < result.routes[i].legs.length; ++j) {
+                    for (int k = 0; k < result.routes[i].legs[j].steps.length; ++k) {
+                        String html_steps = result.routes[i].legs[j].steps[k].htmlInstructions;
+                        String plain_text_steps = html_steps.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", " ");
+                        steps.add(plain_text_steps);
+                    }
                 }
             }
         }
