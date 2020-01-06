@@ -105,10 +105,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     List<Polyline> polylines = new ArrayList<Polyline>();
     ArrayList <Marker> markers = new ArrayList<Marker>();
     ArrayList<String> steps;
-    Set <Marker> obstacles = new HashSet<Marker>();
+    Set <Marker> obstacles;
     private Fragment newFragment3;
     private boolean inStepDialogFragment;
-    private ArrayList<Integer> obstructedRoutes = new ArrayList<Integer>();
+    private ArrayList<Integer> obstructedRoutes ;
 
 
     @Override
@@ -567,6 +567,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void selectRoutesWithoutObstacles(DirectionsResult result) {
         obstacles =  ObstacleMap.getInstance().getMap().keySet();
+        obstructedRoutes = new ArrayList<>();
         for (int i = 0; i < result.routes.length; ++i) {
             if (obstacleInRange(result.routes[i]))
                 obstructedRoutes.add(i);
@@ -591,11 +592,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 double latPuntRuta = decodedPath.get(j).latitude;
                 double longPuntRuta = decodedPath.get(j).longitude;
                 //System.out.println("Latitud punt ruta "+ latPuntRuta);
+                System.out.println("latObstacle: " + latObstacle + "  longObstacle: " + longObstacle);
+                System.out.println("latPuntRuta: " + latPuntRuta + "  longPuntRuta: " + longPuntRuta);
                 if ((latObstacle <= latPuntRuta + RANG_CONSTANT_LAT  && latObstacle >= latPuntRuta - RANG_CONSTANT_LAT) &&
                         (longObstacle <= longPuntRuta + RANG_CONSTANT_LONG  && longObstacle >= longPuntRuta - RANG_CONSTANT_LONG)
                     ) {
-                    System.out.println("latObstacle: " + latObstacle + "longObstacle: " + longObstacle);
-                    System.out.println("latPuntRuta: " + latPuntRuta + "longPuntRuta: " + longPuntRuta);
+                    System.out.println("DINS EL IF!!!");
                     return true;
                 }
             }
