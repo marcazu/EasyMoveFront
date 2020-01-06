@@ -1,5 +1,11 @@
 package com.example.easymovefront.data.model;
 
+/**
+ * Data used in the ranking for each user.
+ * It is composed by the name of the user, his score and user id in the database.
+ * All this data is needed for coding RankingActivity
+ * @see com.example.easymovefront.ui.ranking.RankingActivity
+ */
 public class RankingUser {
 
     private String nom;
