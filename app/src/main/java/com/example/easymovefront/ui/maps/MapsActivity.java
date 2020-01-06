@@ -52,6 +52,7 @@ import com.google.maps.GeoApiContext;
 import com.google.maps.android.PolyUtil;
 import com.google.maps.errors.ApiException;
 import com.google.maps.model.DirectionsResult;
+import com.google.maps.model.DirectionsRoute;
 import com.google.maps.model.TravelMode;
 
 import org.joda.time.DateTime;
@@ -62,9 +63,14 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.StringJoiner;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -106,10 +112,12 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
     private Marker currentMarker;
 
     List<Polyline> polylines = new ArrayList<Polyline>();
-    List<Marker> markers = new ArrayList<Marker>();
+    ArrayList <Marker> markers = new ArrayList<Marker>();
     ArrayList<String> steps;
+    Set <Marker> obstacles;
     private Fragment newFragment3;
     private boolean inStepDialogFragment;
+    private ArrayList<Integer> obstructedRoutes ;
 
     /**
      * Initializes the map instance, retrieves all markers from backend and initializes the drawer
@@ -553,12 +561,15 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
 
         polylines.clear();
 
+
         for(Marker mark : markers)
         {
             mark.remove();
         }
 
         markers.clear();
+
+
     }
 
     /**
@@ -616,9 +627,11 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
                 result = DirectionsApi.newRequest(getGeoContext())
                         .mode(TravelMode.WALKING).origin(og)
                         .alternatives(true)
+                        .language("ca")
                         .destination(dest).departureTime(now)
                         .await();
                 mGeneratedRoute = true;
+                selectRoutesWithoutObstacles(result);
                 formStepByStepRoute(result);
                 addMarkersToMap(result, mMap);
                 addPolyline(result, mMap);
@@ -633,6 +646,45 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
         }
     }
 
+    private void selectRoutesWithoutObstacles(DirectionsResult result) {
+        obstacles =  ObstacleMap.getInstance().getMap().keySet();
+        obstructedRoutes = new ArrayList<>();
+        for (int i = 0; i < result.routes.length; ++i) {
+            if (obstacleInRange(result.routes[i]))
+                obstructedRoutes.add(i);
+            }
+
+    }
+
+    private boolean obstacleInRange(DirectionsRoute route) { //mirar si la ruta té un obstacle en un rang proper en qualsevol dels seus punts
+        List<LatLng> decodedPath = PolyUtil.decode(route.overviewPolyline.getEncodedPath());
+        //FIB 41.389482, 2.113387
+        //obstacle FIB 41.389190, 2.113584
+        //consell est 41.388625, 2.112816
+        final double RANG_CONSTANT_LAT = 0.000345;
+        final double RANG_CONSTANT_LONG = 0.000345;
+        Iterator<Marker> iterator = obstacles.iterator();
+        while (iterator.hasNext()) {
+            Marker marker = iterator.next();
+            double latObstacle = marker.getPosition().latitude;
+            double longObstacle = marker.getPosition().longitude;
+            //System.out.println("Latitud obstacle "+ latObstacle);
+            for (int j = 0; j < decodedPath.size(); ++j) {
+                double latPuntRuta = decodedPath.get(j).latitude;
+                double longPuntRuta = decodedPath.get(j).longitude;
+                //System.out.println("Latitud punt ruta "+ latPuntRuta);
+                System.out.println("latObstacle: " + latObstacle + "  longObstacle: " + longObstacle);
+                System.out.println("latPuntRuta: " + latPuntRuta + "  longPuntRuta: " + longPuntRuta);
+                if ((latObstacle <= latPuntRuta + RANG_CONSTANT_LAT  && latObstacle >= latPuntRuta - RANG_CONSTANT_LAT) &&
+                        (longObstacle <= longPuntRuta + RANG_CONSTANT_LONG  && longObstacle >= longPuntRuta - RANG_CONSTANT_LONG)
+                    ) {
+                    System.out.println("DINS EL IF!!!");
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     /**
      * Obtains an instance of the geocoder used to translate LatLongs into actual physical addresses
@@ -798,7 +850,6 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
                 break;
         }
 
-
         markers.add(mMap.addMarker(origin));
         markers.add(mMap.addMarker(destination));
     }
@@ -821,11 +872,26 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
         ArrayList<Integer> colors = new ArrayList<>();
         colors.add(0xff000000); //black
         colors.add(0xff0000ff); //blue
-        colors.add(0xff888888); //gray
         colors.add(0xffff0000); //red
-        for (int i = 0; i < results.routes.length; ++i ) {
-            List<LatLng> decodedPath = PolyUtil.decode(results.routes[i].overviewPolyline.getEncodedPath());
-            polylines.add(mMap.addPolyline(new PolylineOptions().color(colors.get(i)).addAll(decodedPath)));
+        colors.add(0xff888888); //gray
+        colors.add(0xff00ff00); //green
+        colors.add(0xffff00ff); //magenta
+        colors.add(0xffffff00); //yellow
+        if (results.routes.length == 0) {
+            Toast toast = Toast.makeText(this, "NO HI HA RUTES" , Toast.LENGTH_LONG);
+            toast.show();
+        }
+        else if (obstructedRoutes.size() == results.routes.length) {
+            Toast toast = Toast.makeText(this, "NO HI HA RUTES NO OBSTACULITZADES" , Toast.LENGTH_LONG);
+            toast.show();
+        }
+        else {
+            for (int i = 0; i < results.routes.length; ++i) {
+                if (!obstructedRoutes.contains(i)) {
+                    List<LatLng> decodedPath = PolyUtil.decode(results.routes[i].overviewPolyline.getEncodedPath());
+                    polylines.add(mMap.addPolyline(new PolylineOptions().color(colors.get(i)).addAll(decodedPath)));
+                }
+            }
         }
     }
 
@@ -861,11 +927,14 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
     private void formStepByStepRoute(DirectionsResult result) {
         steps = new ArrayList<>();
         for (int i = 0; i < result.routes.length; ++i) {
-            for (int j = 0; j < result.routes[i].legs.length; ++j) {
-                for (int k = 0; k < result.routes[i].legs[j].steps.length; ++k) {
-                    String html_steps = result.routes[i].legs[j].steps[k].htmlInstructions;
-                    String plain_text_steps  = html_steps.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", " ");
-                    steps.add(plain_text_steps);
+            if (!obstructedRoutes.contains(i)) {
+                steps.add("RUTA " + (i + 1));
+                for (int j = 0; j < result.routes[i].legs.length; ++j) {
+                    for (int k = 0; k < result.routes[i].legs[j].steps.length; ++k) {
+                        String html_steps = result.routes[i].legs[j].steps[k].htmlInstructions;
+                        String plain_text_steps = html_steps.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", " ");
+                        steps.add(plain_text_steps);
+                    }
                 }
             }
         }
