@@ -12,6 +12,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Obstacles in the map.
+ * In the interface can be identified because they have the app logo as appearance.
+ */
 public class ObstacleMap {
     private static final ObstacleMap ourInstance = new ObstacleMap();
 
