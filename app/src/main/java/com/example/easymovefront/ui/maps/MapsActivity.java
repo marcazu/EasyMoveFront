@@ -1,6 +1,5 @@
 package com.example.easymovefront.ui.maps;
 
-import android.content.ClipData;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -14,7 +13,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -60,17 +58,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.StringJoiner;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -117,7 +111,7 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
     Set <Marker> obstacles;
     private Fragment newFragment3;
     private boolean inStepDialogFragment;
-    private ArrayList<Integer> obstructedRoutes ;
+    private ArrayList<Integer> obstructedRoutes;
 
     /**
      * Initializes the map instance, retrieves all markers from backend and initializes the drawer
@@ -661,8 +655,8 @@ public class MapsActivity extends AppCompatActivity implements AsyncResponse, On
         //FIB 41.389482, 2.113387
         //obstacle FIB 41.389190, 2.113584
         //consell est 41.388625, 2.112816
-        final double RANG_CONSTANT_LAT = 0.000345;
-        final double RANG_CONSTANT_LONG = 0.000345;
+        final double RANG_CONSTANT_LAT =  0.0002; //0.000345;
+        final double RANG_CONSTANT_LONG = 0.0002; //0.000345;
         Iterator<Marker> iterator = obstacles.iterator();
         while (iterator.hasNext()) {
             Marker marker = iterator.next();

@@ -67,6 +67,7 @@ dependencies {
 
     //round profile
     implementation 'de.hdodenhof:circleimageview:1.2.1'
+    implementation 'com.android.support:recyclerview-v7:26.1.0'
 
 }
 

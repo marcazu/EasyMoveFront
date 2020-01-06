@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,24 +21,15 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
-import androidx.fragment.app.DialogFragment;
-
 import com.example.easymovefront.R;
 import com.example.easymovefront.data.model.CurrentBitmap;
 import com.example.easymovefront.data.model.LoggedUser;
 import com.example.easymovefront.data.model.ObstacleMap;
 import com.example.easymovefront.network.CreateImageFromUrlTask;
-import com.example.easymovefront.network.CreateMarkerTask;
-import com.example.easymovefront.network.GetMarkerTask;
 import com.example.easymovefront.network.GetSingleMarkerTask;
 import com.example.easymovefront.network.LikeObstacleTask;
 import com.example.easymovefront.network.UpdateMarkerTask;
 import com.google.android.gms.maps.model.Marker;
-
 import com.like.LikeButton;
 import com.like.OnLikeListener;
 
@@ -49,6 +39,12 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.concurrent.ExecutionException;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.DialogFragment;
 
 import static android.app.Activity.RESULT_OK;
 

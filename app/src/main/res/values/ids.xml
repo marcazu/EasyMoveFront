@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="Edittitle" type="id" />
+    <item name="Editdescription" type="id" />
+    <item name="Editpic" type="id" />
+    <item name="editphotoView" type="id" />
+    <item name="loadingDisplayObstacle" type="id" />
+</resources>
