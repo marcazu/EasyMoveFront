@@ -3,6 +3,10 @@ package com.example.easymovefront.data.model;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 
+/**
+ * This class keeps track of the current user logged in: its ID in backend, its access token, aswell as
+ * his Google account
+ */
 public class LoggedUser {
     private static final LoggedUser ourInstance = new LoggedUser();
 
